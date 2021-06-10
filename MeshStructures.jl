@@ -4,12 +4,13 @@ module MeshStructures
 Structure of mesh and domain parameters
 ======================================#
 
-export MeshStructure
+export MeshStructure, cartesianCord
 
-struct cartesianCord
+mutable struct cartesianCord
     x
     y
     z
+    cartesianCord() = new()
 end
 
 struct MeshStructure
@@ -17,7 +18,7 @@ struct MeshStructure
     dims::Any
     cellSize::cartesianCord
     cellCenters::cartesianCord
-    faceCenters::cartesianCord 
+    faceCenters::cartesianCord
     cellNodes::Any
     cellEdges::Any
 

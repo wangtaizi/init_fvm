@@ -1,5 +1,6 @@
-using .initFVM
+#using .initFVM
+using .MeshStructures
+using .MeshGen1D
 
-cell = MeshStructure(1,2,3,4,5,6)
 
-println(cell.cellSize)
+ms = meshGen1D(10, 100)
