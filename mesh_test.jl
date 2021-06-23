@@ -1,4 +1,4 @@
-include("./mesh/MeshStructures.jl")
+include("./structs/structs.jl")
 include("./mesh/MeshGen1D.jl")
 
 using Plots

@@ -1,0 +1,8 @@
+include("./structs/structs.jl")
+include("./mesh/MeshGen1D.jl")
+include("./mesh/generateCellVar.jl")
+include("./bcs/generateBC.jl")
+include("./bcs/applyBC.jl")
+include("./bcs/ghostCells.jl")
+include("./discret/diffusionCD.jl")
+include("./solvers/linearSolver.jl")
