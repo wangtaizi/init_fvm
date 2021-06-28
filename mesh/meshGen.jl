@@ -63,7 +63,7 @@ function meshGen1D(xfaceCenters::Array)
               [1])
 
   return mesh1D
-
+end
 
 function meshGen2D(nx, ny, lx, ly)
   #===============================

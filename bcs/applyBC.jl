@@ -9,7 +9,7 @@ function applyBC(BC::BoundaryCondition)
     if dim == 1
         bc_mat, bc_rhs = applyBC_1D(BC)
     else dim == 2
-        [bc_mat, bc_rhs] = applyBC_2D(BC)
+        bc_mat, bc_rhs = applyBC_2D(BC)
     end
 
     return bc_mat, bc_rhs
