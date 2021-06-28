@@ -1,4 +1,4 @@
-function ghostCells(ϕ::CellVariable, BC::BoundaryCondition)
+function ghostCells(ϕ::Any, BC::BoundaryCondition)
     #==========================================
     Given the cell values of some parameter ϕ,
     determine the ghost cells based on boundary
@@ -17,7 +17,7 @@ function ghostCells(ϕ::CellVariable, BC::BoundaryCondition)
     return ghostϕ
 end
 
-function ghostCells_1D(ϕ::CellVariable, BC::BoundaryCondition)
+function ghostCells_1D(ϕ::Any, BC::BoundaryCondition)
     #============================================
     Determine the value of the ghost cells for a 1D
     domain and add them to 1D ϕ domain

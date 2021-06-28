@@ -16,16 +16,16 @@ function generateCellVar(meshVar::MeshStructure, cellVal)
 
     dim = meshVar.dims
     if prod(size(cellVal)) == 1 #Number of cellVal elems = 1
-        cb  = cellBoundary(cellVal*ones(dim), BC)
+        cb  = ghostCells(cellVal*ones(dim), BC)
 
     elseif prod(size(cellVal) == dim)
-        cb  = cellBoundary(cellVal, BC)
+        cb  = ghostCells(cellVal, BC)
 
     elseif prod(size(cellVal) == dim+2)
         cb  = cellVal
 
     else
-        cb  = cellBoundary(zeros(dim) BC)
+        cb  = ghostCells(zeros(dim), BC)
     end
 
     cellVar = CellVariable(meshVar, cb)
@@ -33,8 +33,26 @@ function generateCellVar(meshVar::MeshStructure, cellVal)
     return cellVar
 end
 
-#function generateCellVar(meshVar::MeshStructure, cellVal, BC...)
+function generateCellVar(meshVar::MeshStructure, cellVal, BC::BoundaryCondition)
     #=====================================================
     Generate cell variable based on dimension of problem
     including ghost cells as a function of input BCs
     =====================================================#
+    dim = meshVar.dims
+    if prod(size(cellVal)) == 1 #Number of cellVal elems = 1
+        cb  = ghostCells(cellVal*ones(dim), BC)
+
+    elseif prod(size(cellVal) == dim)
+        cb  = ghostCells(cellVal, BC)
+
+    elseif prod(size(cellVal) == dim+2)
+        cb  = cellVal
+
+    else
+        cb  = ghostCells(zeros(dim), BC)
+    end
+
+    cellVar = CellVariable(meshVar, cb)
+
+    return cellVar
+end

@@ -16,7 +16,7 @@ struct MeshStructure
     cellSize::Dim
     cellCenters::Dim
     faceCenters::Dim
-    cellNodes::Any
+    cornerNodes::Any
     cellEdges::Any
 
 end

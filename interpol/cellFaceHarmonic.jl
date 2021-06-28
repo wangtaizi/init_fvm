@@ -9,7 +9,7 @@ function cellFaceHarmonic(ϕ::CellVariable)
 
     if dim == 1
         dx   = ϕ.domain.cellSize.x
-        xval = ϕ.val[1:end-1].*ϕ[2:end].*(dx[1:end-1]+dx[2:end]) ./
+        xval = ϕ.val[1:end-1].*ϕ.val[2:end].*(dx[1:end-1]+dx[2:end]) ./
                 (dx[2:end].*ϕ.val[1:end-1]+dx[1:end-1].*ϕ.val[2:end])
         yval = [ ]
         zval = [ ]
