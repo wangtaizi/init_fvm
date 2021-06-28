@@ -27,7 +27,7 @@ bc.right.val    = 0 # c = 0 @ x = L
 
 #Define diffusivity coefficient
 D       = generateCellVar(msh, 1e-5) #assign const val to each cell
-D_face  = cellFaceHarmonic(D)        #assign harmonic mean face vals
+D_face  = harmonicAvg(D)        #assign harmonic mean face vals
 
 #Formulate coefficient matrix and solve
 M_diff          = diffusionCD(D_face)

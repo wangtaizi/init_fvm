@@ -11,12 +11,12 @@ mutable struct Dim
 end
 
 struct MeshStructure
-    dimension::Any
-    dims::Any
-    cellSize::Dim
-    cellCenters::Dim
-    faceCenters::Dim
-    cornerNodes::Any
-    cellEdges::Any
+    dimension::Any      #Number of dimension of domain
+    dims::Any           #Domain shape
+    cellSize::Dim       #Size of each cell
+    cellCenters::Dim    #Location of cell centers
+    faceCenters::Dim    #location of face centers
+    cornerNodes::Any    #Vector of corner nodes
+    cellEdges::Any      #Cell edges 
 
 end

@@ -1,5 +1,5 @@
 include("./structs/structs.jl")
-include("./mesh/MeshGen1D.jl")
+include("./mesh/meshGen.jl")
 
 using Plots
 gr()
