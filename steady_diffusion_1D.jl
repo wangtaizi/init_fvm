@@ -4,7 +4,7 @@ include("./mesh/generateCellVar.jl")
 include("./bcs/generateBC.jl")
 include("./bcs/applyBC.jl")
 include("./bcs/ghostCells.jl")
-include("./interpol/cellFaceHarmonic.jl")
+include("./interpol/harmonicFaceAvg.jl")
 include("./discret/diffusionCD.jl")
 include("./solvers/linearSolver.jl")
 

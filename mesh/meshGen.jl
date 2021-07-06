@@ -40,6 +40,10 @@ function meshGen1D(xfaceCenters::Array)
   ==============================================#
   nx = length(xfaceCenters) - 1
 
+  cellSize    = Dim()
+  cellCenter  = Dim()
+  faceCenter  = Dim()
+
   cellSize.x = [xfaceCenters[2]-xfaceCenters[1];
                   xfaceCenters[2:end]-xfaceCenters[1:end-1];
                   xfaceCenters[end]-xfaceCenters[end-1]]
