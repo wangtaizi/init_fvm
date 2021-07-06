@@ -49,7 +49,6 @@ function diffusionCD_1D(D::FaceVariable)
     #Sparse matrix generation
     ii[1:3*nx] = [reshape(dom[2:nx+1], (nx, 1)); reshape(dom[2:nx+1], (nx, 1));
                     reshape(dom[2:nx+1], (nx, 1))]
-    #ii[1:3*nx] = repeat(reshape(dom[2:nx+1], (nx, 1)), outer = [3, 1])
     jj[1:3*nx] = [reshape(dom[1:nx], (nx, 1)); reshape(dom[2:nx+1], (nx, 1))
                     reshape(dom[3:nx+2], (nx, 1))]
     s[1:3*nx]  = [val_l; val_p; val_r]
@@ -63,6 +62,7 @@ function diffusionCD_2D(D::FaceVariable)
     #========================================
     Returns a discretized diffusion term in 2D
     using the method of central differences
+    for a uniform grid
     ========================================#
 
     #Mesh data
@@ -126,5 +126,5 @@ function diffusionCD_2D(D::FaceVariable)
                                     (nx+2)*(ny+2), (nx+2)*(ny+2))
     M               = Mx + My
 
-    return M                                 
+    return M
 end
