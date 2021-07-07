@@ -5,13 +5,13 @@ function RhieChow(u::CellVariable, v::CellVariable, uap::CellVariable,
     #Rhie-Chow interpolation method
 
     #Interpolated face average of the velocity components
-    uFace       = arithmeticAvg(u)
-    vFace       = arithmeticAvg(v)
+    uFace       = arithmeticFaceAvg(u)
+    vFace       = arithmeticFaceAvg(v)
 
     #Interpolated face average of the ap coefficients of
     #the velocity values
-    uapFace     = arithmeticAvg(uap)
-    vapFace     = arithmeticAvg(vap)
+    uapFace     = arithmeticFaceAvg(uap)
+    vapFace     = arithmeticFaceAvg(vap)
 
     #cell and face gradients of pressure
     presFaceGrad            = faceGrad(p)
