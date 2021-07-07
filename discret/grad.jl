@@ -12,6 +12,7 @@ function grad(ϕ::CellVariable)
         gradx, grady = gradient_2D(ϕ::CellVariable)
 
         return gradx, grady
+    end
 end
 
 function gradient_1D(ϕ::CellVariable)

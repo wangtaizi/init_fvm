@@ -12,6 +12,7 @@ function upwindConvection(u::FaceVariable)
         M, Mx, My = upwindConvection_2D(u::FaceVariable)
 
         return M, Mx, My
+    end
 
 end
 
@@ -109,6 +110,6 @@ function upwindConvection_2D(u::FaceVariable)
             (nx+2)*(ny+2), (nx+2)*(ny+2))
 
     M   = Mx + My
-    
+
     return M, Mx, My
 end

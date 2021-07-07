@@ -5,12 +5,15 @@ function divergence(F::FaceVariable)
     dim = F.domain.dimension
 
     if dim == 1
-        div = divergence_1D(F::FaceVariable)
+        rhs_div = divergence_1D(F::FaceVariable)
+
+        return rhs_div
 
     elseif dim == 2
         rhs_div, rhs_divx, rhs_divy = divergence_2D(F::FaceVariable)
 
-    return div
+        return rhs_div, rhs_divx, rhs_divy
+    end
 end
 
 function divergence_1D(F::FaceVariable)

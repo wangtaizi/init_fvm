@@ -5,6 +5,7 @@ function sourceTerm(ϕ::CellVariable)
         source = sourceTerm_1D(ϕ::CellVariable)
     elseif dim == 2
         source = sourceTerm_2D(ϕ::CellVariable)
+    end
 
     return source
 end

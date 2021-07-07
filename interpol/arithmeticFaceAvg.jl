@@ -26,6 +26,7 @@ function arithmeticFaceAvg(ϕ::CellVariable)
                     (dy[:,2:end]+dy[:,1:end-1])
 
         zval    = [ ]
+    end
 
     avg = FaceVariable(ϕ.domain, xval, yval, zval)
 

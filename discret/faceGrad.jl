@@ -9,6 +9,8 @@ function faceGrad(ϕ::CellVariable)
     elseif dim == 2
         grad = faceGrad_2D(ϕ::CellVariable)
 
+    end
+
     return grad
 end
 
