@@ -1,0 +1,6 @@
+include("./diffusionCD.jl")
+include("./divergence.jl")
+include("./faceGrad.jl")
+include("./grad.jl")
+include("./sourceTerm.jl")
+include("./upwindConvection.jl")
