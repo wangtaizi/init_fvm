@@ -15,6 +15,6 @@ f = plot(ms.cellCenters.x, ones(size(ms.cellCenters.x)),
 plot!(ms.faceCenters.x, ones(size(ms.faceCenters.x)),
         markershape = :cross,
         label =  "face centers",
-        title = "1D Discretized Domain")
+         title = "1D Discretized Domain")
 ylims!(0,2)
 @show f
