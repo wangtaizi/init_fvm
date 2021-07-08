@@ -16,7 +16,29 @@ function grad(ϕ::CellVariable)
 end
 
 function gradient_1D(ϕ::CellVariable)
-    #Calculate the 1D x gradient
+    #===========================================
+    DESCRIPTION:
+    Calculate 2D gradient of field variable
+    from adjascent node values using centered
+    differences.
+
+    RETURNS:
+    CellVariable for each x and y gradient
+    ===========================================#
+    nx      = ϕ.domain.dims[1]
+    xcells  = ϕ.domain.cellSize.x
+    dx      = 0.5*(xcells[1:end-1] + xcells[2:end])
+
+    xval = (ϕ.val[3:nx+2] - ϕ.val[1:nx])./
+                (dx[1:end-1]+dx[2:end])
+
+    yval = [ ]
+
+    zval = [ ]
+
+    grad = CellVariable(ϕ.domain, xval)
+
+    return grad
 
 end
 
@@ -39,10 +61,10 @@ function gradient_2D(ϕ::CellVariable)
     dy      = 0.5*(ycells[:,1:end-1] + ycells[:,2:end])
 
     xval = (ϕ.val[3:nx+2, 2:ny+1] - ϕ.val[1:nx,2:ny+1])./
-                (dx[1:end-1]+dx[2:end])
+                (dx[1:end-1,:]+dx[2:end,:])
 
     yval = (ϕ.val[2:nx+1, 3:ny+2] - ϕ.val[2:nx+1,1:ny])./
-                (dy[1:end-1]+dy[2:end])
+                (dy[:,1:end-1]+dy[:,2:end])
 
     zval = [ ]
 

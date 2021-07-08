@@ -15,8 +15,33 @@ function faceGrad(ϕ::CellVariable)
 end
 
 function faceGrad_1D(ϕ::CellVariable)
-    #Calculate the 1D x gradient
+    #===========================================
+    DESCRIPTION:
+    Calculate 2D gradient of field variable
+    from interpolated face values using centered
+    difference
 
+    RETURNS:
+    FaceVariable of face gradient
+    ===========================================#
+
+    nx  = ϕ.domain.dims[1]
+    lx  = ϕ.domain.cellSize.x
+    dx  = 0.5*(lx[1:end-1] + lx[2:end])
+    xval = (ϕ.val[2:nx+2] - ϕ.val[1:nx+1])./dx
+
+    #dx  = ϕFace.domain.faceCenters.x[2:end] -
+            #ϕFace.domain.faceCenters.x[1:end-1]
+    #xval = (ϕFace.x[3:nx+1] - ϕFace.x[1:nx-1])./
+                #(dx[1:end-1] + dx[2:end])
+    #xval = (ϕFace.x[3:nx+1] - ϕFace.x[1:nx-1])./
+    #            (lx[3:nx+1] - lx[1:nx-1])
+    yval = [ ]
+    zval = [ ]
+
+    grad = FaceVariable(ϕFace.domain, xval, yval, zval)
+
+    return grad
 end
 
 function faceGrad_2D(ϕ::CellVariable)
@@ -29,24 +54,18 @@ function faceGrad_2D(ϕ::CellVariable)
     RETURNS:
     FaceVariable of face gradient
     ===========================================#
-    ϕFace   = arithmetcFaceAvg(ϕ)
 
-    nx  = ϕFace.domain.dims[1]
-    ny  = ϕFace.domain.dims[2]
-    lx  = repeat(ϕFace.domain.cellSize.x, 1, ny)
-    ly  = repeat(ϕFace.domain.cellSize.y', nx, 1)
+    nx  = ϕ.domain.dims[1]
+    ny  = ϕ.domain.dims[2]
+    lx  = repeat(ϕ.domain.cellSize.x, 1, ny)
+    ly  = repeat(ϕ.domain.cellSize.y', nx, 1)
     dx  = 0.5*(lx[1:end-1,:] + lx[2:end,:])
     dy  = 0.5*(ly[:,1:end-1] + ly[:,2:end])
 
-    #xval = (ϕ.val[2:nx+2, 2:ny+1] - ϕ.val[1:nx+1,2:ny+1])./dx
-    #yval = (ϕ.val[2:nx+1, 2:ny+2] - ϕ.val[2:nx+1,1:ny+1])./dy
-    #zval = [ ]
-
-    xval = (ϕFace.x[3:nx+2, 2:ny+1] - ϕFace.x[1:nx,2:ny+1])./
-                (dx[1:end-1]+dx[2:end])
-    yval = (ϕFace.y[2:nx+1, 3:ny+2] - ϕFace.y[2:nx+1,1:ny])./
-                (dy[1:end-1]+dy[2:end])
+    xval = (ϕ.val[2:nx+2, 2:ny+1] - ϕ.val[1:nx+1,2:ny+1])./dx
+    yval = (ϕ.val[2:nx+1, 2:ny+2] - ϕ.val[2:nx+1,1:ny+1])./dy
     zval = [ ]
+
 
     grad = FaceVariable(ϕFace.domain, xval, yval, zval)
 
