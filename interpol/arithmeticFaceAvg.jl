@@ -5,7 +5,7 @@ function arithmeticFaceAvg(ϕ::CellVariable)
     dim = ϕ.domain.dimension
 
     if dim == 1
-        dx      = ϕ.domain.cellSize.s
+        dx      = ϕ.domain.cellSize.x
         xval    = (dx[1:end-1].*ϕ.val[1:end-1]+dx[2:end].*ϕ.val[2:end])./
                     (dx[2:end]+dx[1:end-1])
         yval    = [ ]
@@ -17,7 +17,7 @@ function arithmeticFaceAvg(ϕ::CellVariable)
         dx      = repeat(ϕ.domain.cellSize.x, 1, ny)
         dy      = repeat(ϕ.domain.cellSize.y', nx, 1)
 
-        xval    = (dy[1:end-1,:].*ϕ.val[1:end-1,2:end-1]+
+        xval    = (dx[1:end-1,:].*ϕ.val[1:end-1,2:end-1]+
                     dx[2:end,:].*ϕ.val[2:end,2:end-1])./
                     (dx[2:end,:]+dx[1:end-1,:])
 

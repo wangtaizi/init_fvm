@@ -18,7 +18,7 @@ function meshGen1D(nx, lx)
   cellCenter.y = [0.0]
   cellCenter.z = [0.0]
 
-  faceCenter.x = (0:nx)*dx
+  faceCenter.x = (1:nx)*dx
   faceCenter.y = [0.0]
   faceCenter.z = [0.0]
 
