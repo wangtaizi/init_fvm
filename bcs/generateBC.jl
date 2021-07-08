@@ -66,6 +66,8 @@ function generateBC_2D(meshStruct::MeshStructure)
 
     left    = BC_Type()
     right   = BC_Type()
+    top     = BC_Type()
+    bottom  = BC_Type()
 
     left.neu = 1
     left.dir = 0
@@ -75,13 +77,19 @@ function generateBC_2D(meshStruct::MeshStructure)
     right.dir = 0
     right.val = 0
 
+    top.neu = 1
+    top.dir = 0
+    top.val = 0
+
+    bottom.neu = 1
+    bottom.dir = 0
+    bottom.val = 0
+
     #Generate empty arrays for other boundaries
-    bottom  = [ ]
-    top     = [ ]
     back    = [ ]
     front   = [ ]
 
-    BC_1D = BoundaryCondition(meshStruct,
+    BC_2D = BoundaryCondition(meshStruct,
                 left,
                 right,
                 bottom,
