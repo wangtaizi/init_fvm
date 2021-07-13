@@ -17,12 +17,12 @@ function momentum(msh, uOld, vOld, uBC, vBC, p, faceVel, rho, mu, velRelax, ALGO
     M_vBC, RHS_vBC  = applyBC(vBC)
 
     #Discretize diffusive  and convective terms
-    M_dif   = diffusionCD(mu)
+    M_diff   = diffusionCD(mu)
     M_conv  = rho*upwindConvection(faceVel)
 
     #Build total LHS matrix
-    u_M = -M_dif + M_conv + M_uBC
-    v_M = -M_dif + M_conv + M_vBC
+    u_M = -M_diff + M_conv + M_uBC
+    v_M = -M_diff + M_conv + M_vBC
 
     #Extract coefficients from matrix
     u_ap = calcCoef(msh, u_M, ALGORITHM)

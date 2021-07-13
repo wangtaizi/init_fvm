@@ -61,29 +61,31 @@ function generateBC_2D(meshStruct::MeshStructure)
     structure from given mesh structure
     ================================#
 
+    nx = meshStruct.dims[1]
+    ny = meshStruct.dims[2]
+
     #Assume a 0 Neumann BC for left and right
     #of boundary
-
     left    = BC_Type()
     right   = BC_Type()
     top     = BC_Type()
     bottom  = BC_Type()
 
-    left.neu = 1
-    left.dir = 0
-    left.val = 0
+    left.neu = ones(1,ny)
+    left.dir = zeros(1,ny)
+    left.val = zeros(1,ny)
 
-    right.neu = 1
-    right.dir = 0
-    right.val = 0
+    right.neu = ones(1,ny)
+    right.dir = zeros(1,ny)
+    right.val = zeros(1,ny)
 
-    top.neu = 1
-    top.dir = 0
-    top.val = 0
+    top.neu = ones(nx,1)
+    top.dir = zeros(nx,1)
+    top.val = zeros(nx,1)
 
-    bottom.neu = 1
-    bottom.dir = 0
-    bottom.val = 0
+    bottom.neu = ones(nx,1)
+    bottom.dir = zeros(nx,1)
+    bottom.val = zeros(nx,1)
 
     #Generate empty arrays for other boundaries
     back    = [ ]
