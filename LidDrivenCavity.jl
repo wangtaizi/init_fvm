@@ -13,9 +13,13 @@ include("./navier_stokes/RhieChow.jl")
 function steadyLidDrivenCavity()
     #====================================================
     DESCRIPTION:
-    The incompressible Navier-Stokes equations are solved
-    in a 2D boxed domain using the SIMPLE algorithm and
-    Rhie-Chow interpolation method for a collocated grid.
+    The incompressible Navier-Stokes equations at the
+    viscous limit are solved in a 2D boxed domain using
+    the SIMPLE algorithm and Rhie-Chow interpolation
+    method for a collocated grid.
+
+    ∇⋅(μ∇ū) = ∇p
+    ∇⋅ū = 0
 
     Numerical results are then compared with reference
     data given by Ghia et. al.:
@@ -44,7 +48,7 @@ function steadyLidDrivenCavity()
     msh = meshGen2D(nx, ny, cavityLen, cavityLen)
 
     #Create and set corresponding velocity boundary conditions
-    uBC = generateBC(msh);  vBc = generateBC(msh)
+    uBC = generateBC(msh);  vBC = generateBC(msh)
 
     uBC.top.neu[:] .= 0;    uBC.top.dir[:] .= 1;    uBC.top.val[:] .= lidVel  #Lid velocity
     uBC.bottom.neu[:] .= 0; uBC.bottom.dir[:] .= 1; uBC.bottom.val[:] .= 0    #No slip
@@ -59,9 +63,9 @@ function steadyLidDrivenCavity()
     #Set the pressure correction equation boundary conditions
     pBC = generateBC(msh)           #Set to Neuman BC by default
 
-    pBC.bottom.neu[end/2+0.5] .= 0  #Set reference pressure value
-    pBC.bottom.dir[end/2+0.5] .= 1
-    pBC.bottom.val[end/2+0.5] .= 0
+    pBC.bottom.neu[div(nx,2)] = 0  #Set reference pressure value
+    pBC.bottom.dir[div(nx,2)] = 1
+    pBC.bottom.val[div(nx,2)] = 0
 
     #Build cell and face variables based off initial velocity and pressure guess
     muFaceVar   = generateFaceVar(msh, mu)
@@ -72,4 +76,65 @@ function steadyLidDrivenCavity()
     vCellVar    = generateCellVar(msh, vInit, vBC)
     pCellVar    = generateCellVar(msh, pInit, pBC)
 
-    for 1:nIter
+    #main loop
+    for i = 1:nIter
+
+        #Define previous velocity iteration
+        uOld = uCellVar
+        vOld = vCellVar
+
+        #Solve momentum equations
+        u, v, u_ap, v_ap = momentum(msh, uOld, vOld, uBC, vBC, pCellVar, faceVel,
+                                    rhoFaceVar, muFaceVar, velRelax, "SIMPLE")
+
+        #Pressure Correction Equation
+        # ∇(Vₚ/aₚ)⋅∇p' = ∇⋅ū
+
+        #Rhie Chow Interpolation to find Face Velocity
+        faceVel = RhieChow(u, v, u_ap, v_ap, pCellVar)
+
+        #Find the RHS value of the pressure correction by taking
+        #divergence of the faceVel
+        divFaceVel = divergence(faceVel)
+
+        #face values of the velocity coefficients
+        u_apFace = arithmeticFaceAvg(u_ap)
+        v_apFace = arithmeticFaceAvg(v_ap)
+
+        #Calculate the diffusion coefficient
+        diffCoeffx = velRelax*msh.cellSize.y[1]./u_apFace.x
+        diffCoeffy = velRelax*msh.cellSize.x[1]./v_apFace.y
+
+        diffCoeff  = FaceVariable(msh, diffCoeffx, diffCoeffy, [])
+
+        #Calculate diffusion term of pressure correction equation
+        presCorrectionDiff = diffusionCD(diffCoeff)
+
+        #Apply pressure boundary conditions
+        M_pBC, RHS_pBC = applyBC(pBC)
+
+        #Solve for corrected pressure
+        pNew = linearSolver(msh, presCorrectionDiff + M_pBC,
+                                divFaceVel + RHS_pBC)
+
+        #Update the old and new pressures and calculate max error
+        pOld         = pCellVar
+        pCellVar.val += pNew.val*pRelax
+
+        #Update the velocity given new pressure
+        pGradx, pGrady = grad(pNew)
+
+        uNew = uCellVar.val - pGradx.domain.cellSize.y[1]*pGradx.val./u_ap
+        vNew = vCellVar.val - pGrady.domain.cellSize.x[1]*pGrady.val./v_ap
+
+        uCellVar = velRelax*uNew + (1-velRelax)*uCellVar.val
+        vCellVar = velRelax*vNew + (1-velRelax)*vCellVar.val
+
+        #Plot every 50 iterations
+        #if i % 50 == 0
+
+        #end
+    end
+end
+
+steadyLidDrivenCavity()

@@ -16,8 +16,8 @@ function momentum(msh, uOld, vOld, uBC, vBC, p, faceVel, rho, mu, velRelax, ALGO
     M_uBC, RHS_uBC  = applyBC(uBC)
     M_vBC, RHS_vBC  = applyBC(vBC)
 
-    #Discretize diffusive  and convective terms
-    M_diff   = diffusionCD(mu)
+    #Discretize diffusive  and convective terms`
+    M_diff  = diffusionCD(mu)
     M_conv  = rho*upwindConvection(faceVel)
 
     #Build total LHS matrix
@@ -33,11 +33,11 @@ function momentum(msh, uOld, vOld, uBC, vBC, p, faceVel, rho, mu, velRelax, ALGO
     pGradx, pGrady = grad(p)
 
     #Build the RHS vectors for u and v
-    u_RHS = RHS_uBC - sourceTerm(pGradx) + (1-velRelax)./velRelax.*diag(u_M)
-                .*reshape(uOld.val, :, 1)
+    u_RHS = RHS_uBC - sourceTerm(pGradx) + (1-velRelax)./velRelax.*diag(u_M).*
+                reshape(uOld.val, :, 1)
 
-    v_RHS = RHS_vBC - sourceTerm(pGrady) + (1-velRelax)./velRelax.*diag(v_M)
-                .*reshape(vOld.val, :, 1)
+    v_RHS = RHS_vBC - sourceTerm(pGrady) + (1-velRelax)./velRelax.*diag(v_M).*
+                reshape(vOld.val, :, 1)
 
     #Return the diagonal elements with the velocity
     #relaxation factor implemented

@@ -46,7 +46,7 @@ function divergence_2D(F::FaceVariable)
     #assign divergence to rhs vectors
     i = reshape(nodes[2:nx+1,2:ny+1], (nx*ny,1))
 
-    rhs_div[i]  = reshape(divx+divy, (nx*ny,1))
+    rhs_div[i]   = reshape(divx+divy, (nx*ny,1))
     rhs_divx[i]  = reshape(divx, (nx*ny,1))
     rhs_divy[i]  = reshape(divy, (nx*ny,1))
 
