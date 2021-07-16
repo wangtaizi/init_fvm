@@ -34,7 +34,10 @@ function momentum(msh, uOld, vOld, uBC, vBC, p, faceVel, rho, mu, velRelax, ALGO
 
     #Build the RHS vectors for u and v
     u_RHS = RHS_uBC - sourceTerm(pGradx) + (1-velRelax)./velRelax.*diag(u_M).*
-                reshape(uOld.val, :, 1) # Not sure where the velocity relaxation is coming from. Are you using this to mimic time advancement?
+                reshape(uOld.val, :, 1) # Not sure where the velocity relaxation is coming from. Are you using this to mimic time advancement? 
+    # I see now, this comes from the SIMPLE algorithm. This is OK when the problem is not stiff (so large time steps are OK) or when the problem is steady.
+    # But if many small time steps are required then it is better to reduce the number of pressure Poisson solves per time step and a fractional step method might be better.
+    # In the fractional step method the pressure term does not appear in the momentum equation and is completely shifted to the projection step with one Poisson solve per time step. But it becomes explicit (as opposed to implicit in SIMPLE).
 
     v_RHS = RHS_vBC - sourceTerm(pGrady) + (1-velRelax)./velRelax.*diag(v_M).*
                 reshape(vOld.val, :, 1)
