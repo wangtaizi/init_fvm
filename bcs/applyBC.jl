@@ -45,7 +45,7 @@ function applyBC_1D(BC::BoundaryCondition)
     q       += 1
     ii[q]   = domain[i]
     jj[q]   = domain[i]
-    s[q]    = BC.right.dir/2 + BC.right.neu/dx_f
+    s[q]    = BC.right.dir/2 + BC.right.neu/dx_f #by the way, the Dirichlet condition here isn't compatible with the harmonic mean in the diffusion test case
 
     q       += 1
     ii[q]   = domain[i]
@@ -60,12 +60,12 @@ function applyBC_1D(BC::BoundaryCondition)
     q       += 1
     ii[q]   = domain[i]
     jj[q]   = domain[i+1]
-    s[q]    = -(BC.right.dir/2 + BC.right.neu/dx_i)
+    s[q]    = -(BC.right.dir/2 + BC.right.neu/dx_i) #left
 
     q       += 1
     ii[q]   = domain[i]
     jj[q]   = domain[i]
-    s[q]    = -(BC.right.dir/2 - BC.right.neu/dx_i)
+    s[q]    = -(BC.right.dir/2 - BC.right.neu/dx_i) #left
 
     bc_rhs[domain[i]] = -(BC.left.val)
 
@@ -75,6 +75,7 @@ function applyBC_1D(BC::BoundaryCondition)
     return bc_matrix, bc_rhs
 end
 
+#seems to have some indexing errors, but let's not worry about 2D for now
 function applyBC_2D(BC::BoundaryCondition)
     #===========================================
     Generate boundary condition matrix of
