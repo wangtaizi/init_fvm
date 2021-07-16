@@ -18,7 +18,7 @@ function momentum(msh, uOld, vOld, uBC, vBC, p, faceVel, rho, mu, velRelax, ALGO
 
     #Discretize diffusive  and convective terms`
     M_diff  = diffusionCD(mu)
-    M_conv  = rho*upwindConvection(faceVel)
+    M_conv  = rho*upwindConvection(faceVel) # For the two-phase solver later, rho and mu will also be cell variables
 
     #Build total LHS matrix
     u_M = -M_diff + M_conv + M_uBC
@@ -34,7 +34,7 @@ function momentum(msh, uOld, vOld, uBC, vBC, p, faceVel, rho, mu, velRelax, ALGO
 
     #Build the RHS vectors for u and v
     u_RHS = RHS_uBC - sourceTerm(pGradx) + (1-velRelax)./velRelax.*diag(u_M).*
-                reshape(uOld.val, :, 1)
+                reshape(uOld.val, :, 1) # Not sure where the velocity relaxation is coming from. Are you using this to mimic time advancement?
 
     v_RHS = RHS_vBC - sourceTerm(pGrady) + (1-velRelax)./velRelax.*diag(v_M).*
                 reshape(vOld.val, :, 1)
