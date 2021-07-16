@@ -111,7 +111,11 @@ function steadyLidDrivenCavity()
         presCorrectionDiff = diffusionCD(diffCoeff)
 
         #Apply pressure boundary conditions
-        M_pBC, RHS_pBC = applyBC(pBC)
+        M_pBC, RHS_pBC = applyBC(pBC) 
+        # There should be no need to impose pressure BCs to maintain continuity (at least in the fractional step method with a single pressure solve). 
+        # Instead the corrected face velocities should also satisfy the BCs. 
+        # Subtracting these from the original face velocities should give the correct boundary velocity corrections and these can be imposed.
+        # The pressure field will then be floating with an additive constant, but otherwise the pressure gradients will be correct.
 
         #Solve for corrected pressure
         pNew = linearSolver(msh, presCorrectionDiff + M_pBC,
