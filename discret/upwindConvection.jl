@@ -62,13 +62,13 @@ function upwindConvection_2D(u::FaceVariable)
 
     #Internal cell coefficient values
     ae  = ue_min./u_xp
-    aw  = -uw_max./u_xp
+    aw  = -uw_max./u_xp #check sign? if uw>0 then I am carrying the (i-1)th velocity into the ith cell so the (i-1)th coefficient should be positive
     an  = un_min./u_yp
     as  = -us_max./u_yp
-    apx = (ue_max-uw_min)./u_xp
+    apx = (ue_max-uw_min)./u_xp #similarly here, if ue>0 then I am carrying the ith velocity out and the ith coefficient should be negative
     apy = (un_max-us_min)./u_yp
 
-    #Correct for cell values at boundries
+    #Correct for cell values at boundries #What are these corrections for? I'm assuming the ghost cells already take care of the boundaries and ix/iy exclude them.
     #left boundary
     apx[1,:]    = apx[1,:] - uw_max[1,:]/(2*u_xp[1])
     aw[1,:]     = aw[1,:]/2
