@@ -75,7 +75,6 @@ function applyBC_1D(BC::BoundaryCondition)
     return bc_matrix, bc_rhs
 end
 
-#seems to have some indexing errors, but let's not worry about 2D for now
 function applyBC_2D(BC::BoundaryCondition)
     #===========================================
     Generate boundary condition matrix of
@@ -111,14 +110,14 @@ function applyBC_2D(BC::BoundaryCondition)
     bc_rhs[BC.domain.cornerNodes] .= 0
 
     #Top Boundary Condition
-    i       = ny+2
-    j       = 2:nx+1
-    q       = q[end]+(1:nx)
+    i       = ny+2 #i=2:nx+1?
+    j       = 2:nx+1 #j=ny+2?
+    q       = q[end]+(1:nx) 
     ii[q]   = nodes[i,j]
     jj[q]   = nodes[i,j]
     s[q]    = BC.top.dir/2 + BC.top.neu/dy_f
 
-    q       = q[end]+(1:ny)
+    q       = q[end]+(1:ny) #q=q[end]+(1:nx)?
     ii[q]   = nodes[i,j]
     jj[q]   = nodes[i,j-1]
     s[q]    = BC.top.dir/2 - BC.top.neu/dy_f
@@ -126,14 +125,14 @@ function applyBC_2D(BC::BoundaryCondition)
     bc_rhs[nodes[i,j]] = BC.top.val
 
     #Bottom Boundary Condition
-    i       = ny+2
-    j       = 2:nx+1
+    i       = ny+2 #i=2:nx+1?
+    j       = 2:nx+1 #j=1?
     q       = q[end]+(1:nx)
     ii[q]   = nodes[i,j+1]
     jj[q]   = nodes[i,j]
     s[q]    = -(BC.bottom.dir/2 + BC.bottom.neu/dy_i)
 
-    q       = q[end]+(1:ny)
+    q       = q[end]+(1:ny) #q=q[end]+(1:nx)?
     ii[q]   = nodes[i,j]
     jj[q]   = nodes[i,j]
     s[q]    = -(BC.bottom.dir/2 - BC.bottom.neu/dy_i)
