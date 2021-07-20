@@ -39,6 +39,7 @@ function generateCellVar(meshVar::MeshStructure, cellVal, BC::BoundaryCondition)
     including ghost cells as a function of input BCs
     =====================================================#
     dim = meshVar.dims
+
     if prod(size(cellVal)) == 1 #Number of cellVal elems = 1
         cb  = ghostCells(cellVal*ones(dim), BC)
 

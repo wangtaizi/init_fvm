@@ -60,12 +60,12 @@ function applyBC_1D(BC::BoundaryCondition)
     q       += 1
     ii[q]   = domain[i]
     jj[q]   = domain[i+1]
-    s[q]    = -(BC.right.dir/2 + BC.right.neu/dx_i) #left
+    s[q]    = -(BC.left.dir/2 + BC.left.neu/dx_i) #left
 
     q       += 1
     ii[q]   = domain[i]
     jj[q]   = domain[i]
-    s[q]    = -(BC.right.dir/2 - BC.right.neu/dx_i) #left
+    s[q]    = -(BC.left.dir/2 - BC.left.neu/dx_i) #left
 
     bc_rhs[domain[i]] = -(BC.left.val)
 
@@ -107,8 +107,8 @@ function applyBC_2D(BC::BoundaryCondition)
     q       = 1:4
     ii[q]   = BC.domain.cornerNodes
     jj[q]   = BC.domain.cornerNodes
-    s[q]    = max(BC.top.dir/2 + BC.top.neu/dy_f)
-    bc_rhs[BC.domain.cornerNodes] = 0
+    s[q]    .= maximum(BC.top.dir/2 + BC.top.neu/dy_f)
+    bc_rhs[BC.domain.cornerNodes] .= 0
 
     #Top Boundary Condition
     i       = ny+2

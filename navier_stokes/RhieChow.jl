@@ -18,8 +18,8 @@ function RhieChow(u::CellVariable, v::CellVariable, uap::CellVariable,
     presGradx, presGrady    = grad(p)
 
     #interpolated face average of the cell pressure gradient
-    presGradxFace   = arithmeticAvg(presGradx) #arithmeticFaceAvg
-    presGradyFace   = arithmeticAvg(presGrady) #arithmeticFaceAvg
+    presGradxFace   = arithmeticFaceAvg(presGradx)
+    presGradyFace   = arithmeticFaceAvg(presGrady)
 
     #Define and update starred face velocities
     faceVel    = FaceVariable(u.domain, xval, yval) #xval, yval not defined
