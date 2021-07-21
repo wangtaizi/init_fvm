@@ -54,13 +54,8 @@ function gradient_2D(ϕ::CellVariable)
     ===========================================#
     nx      = ϕ.domain.dims[1]
     ny      = ϕ.domain.dims[2]
-<<<<<<< HEAD
     xcells  = repeat(ϕ.domain.cellSize.x, 1, ny)
     ycells  = repeat(ϕ.domain.cellSize.y', nx, 1)
-=======
-    xcells  = repeat(ϕ.domain.cellSize.x, 1,ny)
-    ycells  = repeat(ϕ.domain.cellSize.y', nx,1)
->>>>>>> 27d496454d80003064881718e297164123f62914
 
     dx      = 0.5*(xcells[1:end-1,:] + xcells[2:end,:])
     dy      = 0.5*(ycells[:,1:end-1] + ycells[:,2:end])
