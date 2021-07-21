@@ -70,8 +70,8 @@ function diffusionCD_2D(D::FaceVariable)
     ny  = D.domain.dims[2]
     nodes   = reshape(1:(nx+2)*(ny+2), (nx+2,ny+2))
 
-    D_x = D.domain.cellSize.x # x data of mesh
-    D_y = D.domain.cellSize.y
+    D_x = repeat(D.domain.cellSize.x, 1, ny) # x data of mesh
+    D_y = repeat(D.domain.cellSize.y', nx, 1)
     dx  = 0.5*(D_x[1:end-1,:] + D_x[2:end,:])
     dy  = 0.5*(D_y[:,1:end-1] + D_y[:,2:end])
     Dx  = D.x #x component of face value, way too many dx's here :(
@@ -88,8 +88,8 @@ function diffusionCD_2D(D::FaceVariable)
 
     #Reassign directional velocity vectors
     # of each direction
-    D_l = Dx[1:nx]./(dx[1:nx].*D_x[2:nx+1]) #left
-    D_r = Dx[2:nx+1]./(dx[2:nx+1].*D_x[2:nx+1]) #right
+    D_l = Dx[1:nx,:]./(dx[1:nx,:].*D_x[2:nx+1,:]) #left
+    D_r = Dx[2:nx+1,:]./(dx[2:nx+1,:].*D_x[2:nx+1,:]) #right
     D_t = Dy[:,2:ny+1]./(dy[:,2:ny+1].*D_y[:,2:ny+1]) #top
     D_b = Dy[:,1:ny]./(dy[:,1:ny].*D_y[:,2:ny+1]) #bottom
 

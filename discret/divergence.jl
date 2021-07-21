@@ -23,17 +23,17 @@ end
 
 function divergence_2D(F::FaceVariable)
     #calculate 2d gradient in x and y directions
-    nx      = ϕ.domain.dims[1]
-    ny      = ϕ.domain.dims[2]
+    nx      = F.domain.dims[1]
+    ny      = F.domain.dims[2]
     nodes   = reshape(1:(nx+2)*(ny+2), (nx+2,ny+2))
-    xcells  = repeat(F.domain.cellSize.x[2:end-1], (1,ny))
-    ycells  = repeat(F.domain.cellSize.y[2:end-1]', (nx,1))
+    xcells  = repeat(F.domain.cellSize.x[2:end-1], 1, ny)
+    ycells  = repeat(F.domain.cellSize.y[2:end-1]', nx, 1)
 
     #Assign directional flux vectors
     Fe = F.x[2:nx+1,:]
     Fw = F.x[1:nx,:]
     Fn = F.y[:,2:ny+1]
-    Fs = F.y[:,1+ny]
+    Fs = F.y[:,1:ny]
 
     divx = (Fe-Fw)./xcells
     divy = (Fn-Fs)./ycells

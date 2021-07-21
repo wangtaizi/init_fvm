@@ -110,14 +110,14 @@ function applyBC_2D(BC::BoundaryCondition)
     bc_rhs[BC.domain.cornerNodes] .= 0
 
     #Top Boundary Condition
-    i       = ny+2 #i=2:nx+1?
-    j       = 2:nx+1 #j=ny+2?
-    q       = q[end]+(1:nx) 
+    i       = 2:nx+1 #i=2:nx+1?
+    j       = ny+2 #j=ny+2?
+    q       = q[end] .+ (1:nx)
     ii[q]   = nodes[i,j]
     jj[q]   = nodes[i,j]
     s[q]    = BC.top.dir/2 + BC.top.neu/dy_f
 
-    q       = q[end]+(1:ny) #q=q[end]+(1:nx)?
+    q       = q[end] .+ (1:nx) #q=q[end]+(1:nx)?
     ii[q]   = nodes[i,j]
     jj[q]   = nodes[i,j-1]
     s[q]    = BC.top.dir/2 - BC.top.neu/dy_f
@@ -125,14 +125,14 @@ function applyBC_2D(BC::BoundaryCondition)
     bc_rhs[nodes[i,j]] = BC.top.val
 
     #Bottom Boundary Condition
-    i       = ny+2 #i=2:nx+1?
-    j       = 2:nx+1 #j=1?
-    q       = q[end]+(1:nx)
-    ii[q]   = nodes[i,j+1]
-    jj[q]   = nodes[i,j]
+    i       = 2:nx+1 #i=2:nx+1?
+    j       = 1 #j=1?
+    q       = q[end] .+ (1:nx)
+    ii[q]   = nodes[i,j]
+    jj[q]   = nodes[i,j+1]
     s[q]    = -(BC.bottom.dir/2 + BC.bottom.neu/dy_i)
 
-    q       = q[end]+(1:ny) #q=q[end]+(1:nx)?
+    q       = q[end] .+ (1:nx) #q=q[end]+(1:nx)?
     ii[q]   = nodes[i,j]
     jj[q]   = nodes[i,j]
     s[q]    = -(BC.bottom.dir/2 - BC.bottom.neu/dy_i)
@@ -142,12 +142,12 @@ function applyBC_2D(BC::BoundaryCondition)
     #Right Boundary Condition
     i       = nx+2
     j       = 2:ny+1
-    q       = q[end]+(1:ny)
+    q       = q[end] .+ (1:ny)
     ii[q]   = nodes[i,j]
     jj[q]   = nodes[i,j]
     s[q]    = BC.right.dir/2 + BC.right.neu/dx_f
 
-    q       = q[end]+(1:ny)
+    q       = q[end] .+ (1:ny)
     ii[q]   = nodes[i,j]
     jj[q]   = nodes[i-1,j]
     s[q]    = BC.right.dir/2 - BC.right.neu/dx_f
@@ -157,20 +157,20 @@ function applyBC_2D(BC::BoundaryCondition)
     #Left Boundary Condition
     i       = 1
     j       = 2:ny+1
-    q       = q[end]+(1:ny)
+    q       = q[end] .+ (1:ny)
     ii[q]   = nodes[i,j]
     jj[q]   = nodes[i+1,j]
     s[q]    = -(BC.left.dir/2 + BC.left.neu/dx_i)
 
-    q       = q[end]+(1:ny)
+    q       = q[end] .+ (1:ny)
     ii[q]   = nodes[i,j]
     jj[q]   = nodes[i,j]
     s[q]    = -(BC.left.dir/2 - BC.left.neu/dx_i)
 
-    bc_rhs[domain[i]] = -(BC.left.val)
+    bc_rhs[nodes[i,j]] = -(BC.left.val)
 
     #Formulate Sparse Matrix
-    bc_matrix = sparse(ii[1:q], jj[1:q], s[1:q],
+    bc_matrix = sparse(ii[1:q[end]], jj[1:q[end]], s[1:q[end]],
                     (nx+2)*(ny+2), (nx+2)*(ny+2))
 
     return bc_matrix, bc_rhs

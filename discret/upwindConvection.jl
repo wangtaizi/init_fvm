@@ -67,10 +67,10 @@ function upwindConvection_2D(u::FaceVariable)
     ue_max[u.x[2:nx+1,:] .< 0.0]    .= 0.0
     uw_min[u.x[1:nx,:] .> 0.0]      .= 0.0
     uw_max[u.x[1:nx,:] .< 0.0]      .= 0.0
-    un_min[u.y[2:ny+1,:] .> 0.0]    .= 0.0
-    un_max[u.y[2:ny+1,:] .< 0.0]    .= 0.0
-    us_min[u.y[1:ny,:] .> 0.0]      .= 0.0
-    us_max[u.y[1:ny,:] .< 0.0]      .= 0.0
+    un_min[u.y[:,2:ny+1] .> 0.0]    .= 0.0
+    un_max[u.y[:,2:ny+1] .< 0.0]    .= 0.0
+    us_min[u.y[:,1:ny] .> 0.0]      .= 0.0
+    us_max[u.y[:,1:ny] .< 0.0]      .= 0.0
 
     #Internal cell coefficient values
     ae  = ue_min./u_xp

@@ -18,10 +18,10 @@ function generateCellVar(meshVar::MeshStructure, cellVal)
     if prod(size(cellVal)) == 1 #Number of cellVal elems = 1
         cb  = ghostCells(cellVal*ones(dim), BC)
 
-    elseif prod(size(cellVal) == dim)
+    elseif size(cellVal) == dim
         cb  = ghostCells(cellVal, BC)
 
-    elseif prod(size(cellVal) == dim+2)
+    elseif size(cellVal) == dim.+2
         cb  = cellVal
 
     else

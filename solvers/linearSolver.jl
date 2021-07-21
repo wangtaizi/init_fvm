@@ -8,7 +8,11 @@ function linearSolver(meshStruct::MeshStructure, M, RHS)
 
     sol     = M \ RHS
 
-    ϕ_val   = reshape(sol, (dims[1]+2, 1))
+        if n >= 2
+            ϕ_val   = reshape(sol, dims.+2)
+        else
+            ϕ_val   = reshape(sol, (dims[1]+2, 1))
+        end
 
     ϕ_struct = CellVariable(meshStruct, ϕ_val)
 

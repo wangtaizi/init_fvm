@@ -67,7 +67,7 @@ function faceGrad_2D(ϕ::CellVariable)
     zval = [ ]
 
 
-    grad = FaceVariable(ϕFace.domain, xval, yval, zval)
+    grad = FaceVariable(ϕ.domain, xval, yval, zval)
 
     return grad
 end

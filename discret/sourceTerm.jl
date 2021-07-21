@@ -25,9 +25,9 @@ function sourceTerm_2D(ϕ::CellVariable)
     nodes   = reshape(1:(nx+2)*(ny+2), (nx+2,ny+2))
 
     #initialize source term vector
-    source = zeros((nx+2)*(ny+2), 1)
+    source  = zeros((nx+2)*(ny+2), 1)
 
-    i       = reshape(nodes[2:nx+1,2:ny+1], (nx*ny,1))
+    i         = reshape(nodes[2:nx+1,2:ny+1], (nx*ny,1))
     source[i] = reshape(ϕ.val[2:nx+1,2:ny+1], (nx*ny,1))
 
     return source

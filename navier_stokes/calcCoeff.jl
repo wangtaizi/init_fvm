@@ -25,7 +25,7 @@ function calcCoeff(msh, M, ALGORITHM)
     vol = repeat(msh.cellSize.x, 1, ny+2).*repeat(msh.cellSize.y', nx+2, 1)
     val = reshape(apSum, nx+2, ny+2).*vol
 
-    apSum = CellVariable(msh.domain, val)
+    apSum = CellVariable(msh, val)
 
     return apSum
 end
