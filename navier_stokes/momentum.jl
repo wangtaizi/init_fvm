@@ -1,4 +1,4 @@
-function momentum(msh, uOld, vOld, uBC, vBC, p, faceVel, rho, mu, velRelax, ALGORITHM)
+function momentum(msh, uOld, vOld, uBC, vBC, pCellVar, faceVel, rho, muFaceVar, velRelax, ALGORITHM)
     #===========================================
     DESCRIPTION:
     Given boundary conditions, initial velocity
@@ -17,24 +17,26 @@ function momentum(msh, uOld, vOld, uBC, vBC, p, faceVel, rho, mu, velRelax, ALGO
     M_vBC, RHS_vBC  = applyBC(vBC)
 
     #Discretize diffusive  and convective terms`
-    M_diff  = diffusionCD(mu)
-    M_conv  = rho*upwindConvection(faceVel) # For the two-phase solver later, rho and mu will also be cell variables
+    M_diff  = diffusionCD(muFaceVar)
+    M_conv  = rho .* upwindConvection(faceVel)[1] # For the two-phase solver later, rho and mu will also be cell variables
 
     #Build total LHS matrix
     u_M = -M_diff + M_conv + M_uBC
     v_M = -M_diff + M_conv + M_vBC
 
     #Extract coefficients from matrix
-    u_ap = calcCoef(msh, u_M, ALGORITHM)
-    v_ap = calcCoef(msh, v_M, ALGORITHM)
+    u_ap = calcCoeff(msh, u_M, ALGORITHM)
+    v_ap = calcCoeff(msh, v_M, ALGORITHM)
 
     #Create cell variables for the pressure
     #gradient in each direction
-    pGradx, pGrady = grad(p)
+    pGradx, pGrady = grad(pCellVar)
 
     #Build the RHS vectors for u and v
     u_RHS = RHS_uBC - sourceTerm(pGradx) + (1-velRelax)./velRelax.*diag(u_M).*
-                reshape(uOld.val, :, 1) # Not sure where the velocity relaxation is coming from. Are you using this to mimic time advancement? 
+                reshape(uOld.val, :, 1)
+
+    # Not sure where the velocity relaxation is coming from. Are you using this to mimic time advancement?
     # I see now, this comes from the SIMPLE algorithm. This is OK when the problem is not stiff (so large time steps are OK) or when the problem is steady.
     # But if many small time steps are required then it is better to reduce the number of pressure Poisson solves per time step and a fractional step method might be better.
     # In the fractional step method the pressure term does not appear in the momentum equation and is completely shifted to the projection step with one Poisson solve per time step. But it becomes explicit (as opposed to implicit in SIMPLE).
