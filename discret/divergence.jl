@@ -1,4 +1,4 @@
-function divergence(F::FaceVariable) # Should this be a CellVariable? in the lid-driven cavity test case, this has n+1 entries but the BC vector has n+2
+function divergence(F::FaceVariable)
     #Given a field variable face vector,
     #return the divergence RHS vector
 
