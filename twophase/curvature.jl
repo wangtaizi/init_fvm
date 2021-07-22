@@ -22,11 +22,11 @@ function curvature(G::CellVariable)
 		Gx = gradextend(Gx)
 		Gy = gradextend(Gy)
 		Gxx, Gxy = grad(Gx)
-		Gxx = gradextend(Gxx)
-		Gxy = gradextend(Gxy)
+		#Gxx = gradextend(Gxx)
+		#Gxy = gradextend(Gxy)
 		Gyx, Gyy = grad(Gy)
-		Gyx = gradextend(Gyx)
-		Gyy = gradextend(Gyy)
+		#Gyx = gradextend(Gyx)
+		#Gyy = gradextend(Gyy)
 	
 		Gxv = Gx.val
 		Gyv = Gy.val

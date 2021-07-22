@@ -5,6 +5,7 @@ function gradextend(G::CellVariable)
 	Gv = G.val
 	nx = G.domain.dims[1]
 	ny = G.domain.dims[2]
+	Gv = Gv[2:nx+1,2:ny+1]
 
 	#top of matrix
 	N1 = Gv[1,:]

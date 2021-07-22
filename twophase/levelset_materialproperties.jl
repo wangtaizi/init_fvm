@@ -1,7 +1,8 @@
 function levelset_materialproperties(G::CellVariable, rho1, rho2, mu1, mu2)
 
 	# Commented: Compute density (rho) and dynamic viscosity (mu) based on marker function (4.15) of Tryggvason, Scardovelli and Zaleski (2011) (c = 3)
-	# Current version: Compute " " based on marker function (11) of van der Pijl, Segal, Vuik and Wesseling (2005) (c = 3/2)
+	# Current version: Compute " " based on marker function (11) of van der Pijl, Segal, Vuik and Wesseling (2005) (c = 3/2) which originates from Sussman, Smereka and Osher (1994)
+	# c = effective thickness of interface (# grid cells)
 	
 	dim = G.domain.dimension
 
