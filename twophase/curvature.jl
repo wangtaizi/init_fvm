@@ -15,8 +15,9 @@ function curvature(G::CellVariable)
 
 	elseif dim == 2
 
-		#Method 1: direct computation of surface Laplacian
-		
+		#ideally should use divergence function but divergence acts on a FaceVariable whereas components of the surface normal vector should be collocated
+		#should verify that laplacian = div(grad) discretely but perhaps these are not the right variables to use for verification
+
 		Gx, Gy = grad(G)
 		Gx = gradextend(Gx)
 		Gy = gradextend(Gy)
@@ -37,22 +38,6 @@ function curvature(G::CellVariable)
 		kval = similar(Gxv)
 		@. kval = (2. *Gxv*Gyv*Gxyv - Gyv*Gyv*Gxxv - Gxv*Gxv*Gyyv) / (Gxv*Gxv + Gyv*Gyv)^(3.0 / 2.0)
 
-		
-		#Method 2: computation from normal vector
-		
-		facenorm = faceGrad_2D(G)
-		facenormx = facenorm.x
-		facenormy = facenorm.y
-		facenormn = similar(facenormx)
-		@. facenormn = sqrt(facenormx.^2 + facenormy.^2)
-		@. facenorm.x = facenorm.x / facenormn
-		@. facenorm.y = facenorm.y / facenormn
-		
-		kvalface, divx, divy = divergence(facenorm)
-		
-		#Check that div grad = laplacian discretely
-		sum(kvalface.val .- kval)
-		
 	end
 
 	k = CellVariable(G.domain, kval)
