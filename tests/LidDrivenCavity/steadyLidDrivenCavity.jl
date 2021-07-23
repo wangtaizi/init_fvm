@@ -1,15 +1,15 @@
 using LinearAlgebra
 using Plots
 
-include("./structs/structs.jl")
-include("./bcs/bcs.jl")
-include("./discret/discret.jl")
-include("./interpol/interpol.jl")
-include("./mesh/mesh.jl")
-include("./solvers/linearSolver.jl")
-include("./navier_stokes/calcCoeff.jl")
-include("./navier_stokes/momentum.jl")
-include("./navier_stokes/RhieChow.jl")
+include("../../structs/structs.jl")
+include("../../bcs/bcs.jl")
+include("../../discret/discret.jl")
+include("../../interpol/interpol.jl")
+include("../../mesh/mesh.jl")
+include("../../solvers/linearSolver.jl")
+include("../../navier_stokes/calcCoeff.jl")
+include("../../navier_stokes/momentum.jl")
+include("../../navier_stokes/RhieChow.jl")
 include("./GhiaValues.jl")
 
 function steadyLidDrivenCavity()
