@@ -11,11 +11,11 @@ include("../../navier_stokes/calcCoeff.jl")
 include("../../navier_stokes/momentum.jl")
 include("../../navier_stokes/RhieChow.jl")
 
-function couetteFlow()
+function poiseuilleFlow()
     #====================================================
     DESCRIPTION:
     The incompressible Navier-Stokes equations are solved
-    for a fully developed cacnonical couette flow
+    for a fully developed cacnonical poiseuille flow
     within a 2D channel
     =====================================================#
 ##
@@ -24,13 +24,12 @@ function couetteFlow()
     uInit       = 0.0                       #Initial guess for x velocity
     vInit       = 0.0                       #Initial guess for y velocity
     pInit       = 0.0                       #Initial guess for pressure
-    surfaceVel  = 1.0                       #Velocity of the top surface
     height      = 1.0                       #channel height
     len         = 2*height                  #channel length
     dPdx        = 0                         #pressure gradient in x direction
     Re          = 100                       #Reynolds number
     rho         = 1000                      #Density of fluid
-    mu          = rho*len*surfaceVel/Re     #Dynamic viscosity                  
+    mu          = rho*len*surfaceVel/Re     #Dynamic viscosity
     nx          = 100                       #Number of x nodes
     ny          = 100                       #Number of y nodes
 
@@ -40,7 +39,7 @@ function couetteFlow()
     #Create and set corresponding velocity boundary conditions
     uBC = generateBC(msh);  vBC = generateBC(msh)
 
-    uBC.top.neu[:] .= 0;    uBC.top.dir[:] .= 1;    uBC.top.val[:] .= surfaceVel  #surface velocity
+    uBC.top.neu[:] .= 0;    uBC.top.dir[:] .= 1;    uBC.top.val[:] .= 0       #surface velocity
     uBC.bottom.neu[:] .= 0; uBC.bottom.dir[:] .= 1; uBC.bottom.val[:] .= 0    #No slip
     uBC.left.neu[:] .= 1;   uBC.left.dir[:] .= 0;   uBC.left.val[:] .= 0      #No penetration
     uBC.right.neu[:] .= 1;  uBC.right.dir[:] .= 0;  uBC.right.val[:] .= 0     #No penetration
@@ -72,7 +71,7 @@ function couetteFlow()
                                 rho, muFaceVar, velRelax, "SIMPLE")
 
     #Analytical solution
-    U(y) = y./height .* (surfaceVel.-height.^2 ./(2*mu).*dPdx.*(1 .-y/height))
+    U(y) = -0.5*height^2/mu*dPdx*(1-(y/height).^2)
     yRng = LinRange(0, height, ny)
     uAnalytical = U(yRng)
 
@@ -95,4 +94,4 @@ function couetteFlow()
     display(fig1)
 end
 
-couetteFlow()
+poiseuilleFlow()
