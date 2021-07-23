@@ -51,7 +51,7 @@ if case == 1 #circle translation
 
 
 
-elseif case == 2 #Zalesak's disk (Zalesak 1999, see also Ansari (2019) Listing 3.1)
+elseif case == 2 #Zalesak's disk (Zalesak (1999), see also Ansari (2019) Listing 3.1)
 
 	#initialize interface
 	Rval = similar(x)	
@@ -107,7 +107,7 @@ elseif case == 2 #Zalesak's disk (Zalesak 1999, see also Ansari (2019) Listing 3
 	@. Uy = 0.5 - x
 
 	#set time step
-	dt = 2*pi/628 # equals dx with some adjustment so it reaches exactly 2pi after 628 steps
+	dt = 2*pi/628 # equals dx (for 100x100 box) with some adjustment so it reaches exactly 2pi after 628 steps
 
 	#advect (to be written)
 
