@@ -26,10 +26,9 @@ function poiseuilleFlow()
     pInit       = 0.0                       #Initial guess for pressure
     height      = 1.0                       #channel height
     len         = 2*height                  #channel length
-    dPdx        = 0                         #pressure gradient in x direction
-    Re          = 100                       #Reynolds number
+    dPdx        = 0.01                      #pressure gradient in x direction
     rho         = 1000                      #Density of fluid
-    mu          = rho*len*surfaceVel/Re     #Dynamic viscosity
+    mu          = .001                      #Dynamic viscosity
     nx          = 100                       #Number of x nodes
     ny          = 100                       #Number of y nodes
 
@@ -39,24 +38,25 @@ function poiseuilleFlow()
     #Create and set corresponding velocity boundary conditions
     uBC = generateBC(msh);  vBC = generateBC(msh)
 
-    uBC.top.neu[:] .= 0;    uBC.top.dir[:] .= 1;    uBC.top.val[:] .= 0       #surface velocity
-    uBC.bottom.neu[:] .= 0; uBC.bottom.dir[:] .= 1; uBC.bottom.val[:] .= 0    #No slip
-    uBC.left.neu[:] .= 1;   uBC.left.dir[:] .= 0;   uBC.left.val[:] .= 0      #No penetration
-    uBC.right.neu[:] .= 1;  uBC.right.dir[:] .= 0;  uBC.right.val[:] .= 0     #No penetration
+    uBC.top.neu[:]    .= 0; uBC.top.dir[:]    .= 1; uBC.top.val[:]    .= 0 #surface velocity
+    uBC.bottom.neu[:] .= 0; uBC.bottom.dir[:] .= 1; uBC.bottom.val[:] .= 0 #No slip
+    uBC.left.neu[:]   .= 1; uBC.left.dir[:]   .= 0; uBC.left.val[:]   .= 0 #No penetration
+    uBC.right.neu[:]  .= 1; uBC.right.dir[:]  .= 0; uBC.right.val[:]  .= 0 #No penetration
 
-    vBC.top.neu[:] .= 0;    vBC.top.dir[:] .= 1;    vBC.top.val[:] .= 0       #No penetration
-    vBC.bottom.neu[:] .= 0; vBC.bottom.dir[:] .= 1; vBC.bottom.val[:] .= 0    #No penetration
-    vBC.left.neu[:] .= 0;   vBC.left.dir[:] .= 1;   vBC.left.val[:] .= 0      #No slip
-    vBC.right.neu[:] .= 0;  vBC.right.dir[:] .= 1;  vBC.right.val[:] .= 0     #No slip
+    vBC.top.neu[:]    .= 0; vBC.top.dir[:]    .= 1; vBC.top.val[:]    .= 0 #No penetration
+    vBC.bottom.neu[:] .= 0; vBC.bottom.dir[:] .= 1; vBC.bottom.val[:] .= 0 #No penetration
+    vBC.left.neu[:]   .= 0; vBC.left.dir[:]   .= 1; vBC.left.val[:]   .= 0 #No slip
+    vBC.right.neu[:]  .= 0; vBC.right.dir[:]  .= 1; vBC.right.val[:]  .= 0 #No slip
 
     #Set the pressure correction equation boundary conditions
     pBC = generateBC(msh)           #Set to Neuman BC by default
 
-    pBC.top.neu[:] .= 1;        pBC.top.dir[:] .= 0;        pBC.top.val[:] .= 0
-    pBC.bottom.neu[:] .= 1;     pBC.bottom.dir[:] .= 0;     pBC.bottom.val[:] .= 0
+    pBC.top.neu[:]    .= 1; pBC.top.dir[:]    .= 0; pBC.top.val[:]    .= 0
+    pBC.bottom.neu[:] .= 1; pBC.bottom.dir[:] .= 0; pBC.bottom.val[:] .= 0
+    pBC.left.neu[:]   .= 1; pBC.left.dir[:]   .= 0; pBC.left.val[:]   .= 0
+    pBC.right.neu[:]  .= 1; pBC.right.dir[:]  .= 0; pBC.right.val[:]  .= 0
+
     pBC.bottom.neu[div(ny,2)] = 0; pBC.bottom.dir[div(ny,2)] = 1; pBC.bottom.val[div(ny,2)] = 1
-    pBC.left.neu[:] .= 1;       pBC.left.dir[:] .= 0;       pBC.left.val[:] .= 0
-    pBC.right.neu[:] .= 1;      pBC.right.dir[:] .= 0;      pBC.right.val[:] .= 0
 
     #Build cell and face variables based off initial velocity and pressure guess
     muFaceVar   = generateFaceVar(msh, mu)
@@ -64,14 +64,17 @@ function poiseuilleFlow()
 
     uCellVar    = generateCellVar(msh, uInit, uBC)
     vCellVar    = generateCellVar(msh, vInit, vBC)
-    pCellVar    = generateCellVar(msh, pInit, pBC)
+    pCellVar    = generateCellVar(msh, 1, pBC)
 
     #Solve momentum equations
-    uCellVar, vCellVar, u_ap, v_ap = momentum(msh, uCellVar, vCellVar, uBC, vBC, pCellVar, faceVel,
-                                rho, muFaceVar, velRelax, "SIMPLE")
+    uCellVar, vCellVar, u_ap, v_ap = momentum(msh, uCellVar, vCellVar, uBC, vBC,
+                                                pCellVar, faceVel, rho, muFaceVar,
+                                                velRelax, "SIMPLE")
+    #Correct momentum function to take pressure gradient outside first
+
 
     #Analytical solution
-    U(y) = -0.5*height^2/mu*dPdx*(1-(y/height).^2)
+    U(y) = -0.5*height^2/mu*dPdx*(1 .-(y/height).^2)
     yRng = LinRange(0, height, ny)
     uAnalytical = U(yRng)
 
