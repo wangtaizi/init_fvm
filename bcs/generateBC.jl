@@ -32,10 +32,12 @@ function generateBC_1D(meshStruct::MeshStructure)
 
     left.neu = 1
     left.dir = 0
+    left.periodic = false
     left.val = 0
 
     right.neu = 1
     right.dir = 0
+    right.periodic = false
     right.val = 0
 
     #Generate empty arrays for other boundaries
@@ -71,21 +73,25 @@ function generateBC_2D(meshStruct::MeshStructure)
     top     = BC_Type()
     bottom  = BC_Type()
 
-    left.neu = ones(1,ny)
-    left.dir = zeros(1,ny)
-    left.val = zeros(1,ny)
+    left.neu        = ones(1,ny)
+    left.dir        = zeros(1,ny)
+    left.val        = zeros(1,ny)
+    left.periodic   = false
 
-    right.neu = ones(1,ny)
-    right.dir = zeros(1,ny)
-    right.val = zeros(1,ny)
+    right.neu       = ones(1,ny)
+    right.dir       = zeros(1,ny)
+    right.val       = zeros(1,ny)
+    right.periodic  = false
 
-    top.neu = ones(nx,1)
-    top.dir = zeros(nx,1)
-    top.val = zeros(nx,1)
+    top.neu         = ones(nx,1)
+    top.dir         = zeros(nx,1)
+    top.val         = zeros(nx,1)
+    top.periodic    = false
 
-    bottom.neu = ones(nx,1)
-    bottom.dir = zeros(nx,1)
-    bottom.val = zeros(nx,1)
+    bottom.neu      = ones(nx,1)
+    bottom.dir      = zeros(nx,1)
+    bottom.val      = zeros(nx,1)
+    bottom.periodic = false
 
     #Generate empty arrays for other boundaries
     back    = [ ]

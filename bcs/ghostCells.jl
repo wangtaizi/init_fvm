@@ -53,21 +53,47 @@ function ghostCells_2D(ϕ::Any, BC:: BoundaryCondition)
     ghostϕ  = zeros(nx+2, ny+2)
     ghostϕ[2:nx+1, 2:ny+1]  = ϕ
 
-    #left boundary
-    ghostϕ[1,2:ny+1] = (BC.left.val' .- ϕ[1,:].*(BC.left.neu'/dx_i + BC.left.dir'/2)) ./
-                (-BC.left.neu'/dx_i + BC.left.dir'/2)
+    if (BC.left.periodic == false && BC.right.periodic == false)
+        #non periodic boundary conditions
 
-    #right boundary
-    ghostϕ[nx+2,2:ny+1] = (BC.right.val'.-ϕ[end,:].*(-BC.right.neu'/dx_f + BC.right.dir'/2)) ./
-                (BC.right.neu'/dx_f + BC.right.dir'/2)
+        #left boundary
+        ghostϕ[1,2:ny+1] = (BC.left.val' .- ϕ[1,:].*(BC.left.neu'/dx_i + BC.left.dir'/2)) ./
+                    (-BC.left.neu'/dx_i + BC.left.dir'/2)
 
-    #top boundary
-    ghostϕ[2:nx+1,ny+2] = (BC.top.val.-ϕ[:,end].*(-BC.top.neu/dy_f + BC.top.dir/2)) ./
-                (BC.top.neu/dy_f + BC.top.dir/2)
+        #right boundary
+        ghostϕ[nx+2,2:ny+1] = (BC.right.val'.-ϕ[end,:].*(-BC.right.neu'/dx_f + BC.right.dir'/2)) ./
+                    (BC.right.neu'/dx_f + BC.right.dir'/2)
 
-    #bottom boundary
-    ghostϕ[2:nx+1,1] = (BC.bottom.val.-ϕ[:,1].*(BC.bottom.neu/dy_i + BC.bottom.dir/2)) ./
-                (-BC.bottom.neu/dy_i + BC.bottom.dir/2)
+    elseif (BC.left.periodic == true && BC.right.periodic == true)
+        #periodic boundary conditions
+
+        #left boundary
+        ghostϕ[1,2:ny+1] = ϕ[end,:]
+
+        #right boundary
+        ghostϕ[nx+2,2:ny+1] = ϕ[1,:]
+    end
+
+    if (BC.top.periodic == false && BC.bottom.periodic == false)
+        #non periodic boundary conditions
+
+        #top boundary
+        ghostϕ[2:nx+1,ny+2] = (BC.top.val.-ϕ[:,end].*(-BC.top.neu/dy_f + BC.top.dir/2)) ./
+                    (BC.top.neu/dy_f + BC.top.dir/2)
+
+        #bottom boundary
+        ghostϕ[2:nx+1,1] = (BC.bottom.val.-ϕ[:,1].*(BC.bottom.neu/dy_i + BC.bottom.dir/2)) ./
+                    (-BC.bottom.neu/dy_i + BC.bottom.dir/2)
+
+    elseif (BC.top.periodic == true && BC.bottom.periodic == true)
+        #periodic boundary conditions
+
+        #top boundary
+        ghostϕ[2:nx+1,2:ny+2] = ϕ[:,1]
+
+        #bottom boundary
+        ghostϕ[2:nx+1,1] = ϕ[:,end]
+    end
 
     return ghostϕ
 end

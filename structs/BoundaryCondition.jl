@@ -6,17 +6,17 @@ their types
 ===========================#
 
 mutable struct BC_Type
-    neu
-    dir
-    val
-    periodic::Bool
+    neu #Neumann Condition
+    dir #Dirichlet Condition
+    val #Value of Condition
+    periodic::Bool #Used to check whether BC is periodic
 
     BC_Type() = ( K = new(); K.periodic = false;
                 return K)
 end
 
 struct BoundaryCondition
-    domain::Any
+    domain::MeshStructure
     left::Any
     right::Any
     bottom::Any
