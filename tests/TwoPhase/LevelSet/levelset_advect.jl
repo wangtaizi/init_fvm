@@ -1,8 +1,8 @@
-include("./structs/structs.jl")
-include("./mesh/mesh.jl")
-include("./discret/discret.jl")
-include("./twophase/twophase.jl")
-include("./twophase/levelset.jl")
+include("../../../structs/structs.jl")
+include("../../../mesh/mesh.jl")
+include("../../../discret/discret.jl")
+include("../../../twophase/twophase.jl")
+include("../../../twophase/levelset.jl")
 
 #advection test for level set routine
 case = 2
