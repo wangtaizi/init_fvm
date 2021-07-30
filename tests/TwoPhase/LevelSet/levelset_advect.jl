@@ -1,5 +1,6 @@
 include("../../../structs/structs.jl")
 include("../../../mesh/mesh.jl")
+include("../../../bcs/bcs.jl")
 include("../../../discret/discret.jl")
 include("../../../twophase/twophase.jl")
 include("../../../twophase/levelset.jl")
@@ -38,7 +39,8 @@ if case == 1 #circle translation
 	G = CellVariable(msh,Gval)
 
 	#for verification
-	F,rho,mu = levelset_materialproperties(G,rho1,rho2,mu1,mu2)
+	G0 = G
+	F0,rho0,mu0 = levelset_materialproperties(G0,rho1,rho2,mu1,mu2)
 
 	#set velocity direction and magnitude
 	Ux = 1. #x relative magnitude
@@ -47,9 +49,25 @@ if case == 1 #circle translation
 	Ux = Ux/sqrt(Ux^2+Uy^2)*U
 	Uy = Uy/sqrt(Ux^2+Uy^2)*U
 
-	#advect (to be written) (need periodic BC)
+	#advect
 
+	#create periodic BC
+	BC = generateBC(msh)
+	BC.left.neu = zeros(1,ny)
+	BC.right.neu = zeros(1,ny)
+	BC.top.neu = zeros(nx,1)
+	BC.bottom.neu = zeros(nx,1)
+	BC.left.periodic = true
+	BC.right.periodic = true
+	BC.top.periodic = true
+	BC.bottom.periodic = true
+	bc_mat, bc_rhs = applyBC(BC)
 
+	#force G to be periodic
+	ghost = ghostCells(Gval[2:nx+1,2:ny+1],BC)
+	
+	
+	
 
 elseif case == 2 #Zalesak's disk (Zalesak (1999), see also Ansari (2019) Listing 3.1)
 
@@ -98,7 +116,8 @@ elseif case == 2 #Zalesak's disk (Zalesak (1999), see also Ansari (2019) Listing
 	G = CellVariable(msh,Gval)
 	
 	#for verification
-	F,rho,mu = levelset_materialproperties(G,rho1,rho2,mu1,mu2)
+	G0 = G
+	F0,rho0,mu0 = levelset_materialproperties(G0,rho1,rho2,mu1,mu2)
 
 	#set velocity field
 	Ux = similar(x)
@@ -113,3 +132,21 @@ elseif case == 2 #Zalesak's disk (Zalesak (1999), see also Ansari (2019) Listing
 
 
 end	
+
+#plot
+
+using Plots
+default(show=false)
+ENV["GKSwstype"]=100
+
+xint = x[2:nx+1,1]
+yint = y[1,2:ny+1]
+G0int = G0.val[2:nx+1,2:ny+1]
+pcontour = Plots.contour(xint,yint,G0int',levels=[0.0],color=:black,aspect_ratio=:equal,xlim=[0,1],ylim=[0,1])
+Plots.plot(pcontour)
+
+if case == 1 
+	savefig("interface_circle_init")
+elseif case == 2
+	savefig("interface_zalesak_init")
+end

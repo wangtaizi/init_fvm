@@ -152,24 +152,24 @@ function applyBC_2D(BC::BoundaryCondition)
         q       = q[end] .+ (1:nx)
         ii[q]   = nodes[i,j]
         jj[q]   = nodes[i,j]
-        s[q]    = 1
+        s[q]    .= 1
 
         q       = q[end] .+ (1:nx)
         ii[q]   = nodes[i,j]
         jj[q]   = nodes[i,j-1]
-        s[q]    = -1
+        s[q]    .= -1
 
         q       = q[end] .+ (1:nx)
         ii[q]   = nodes[i,j]
         jj[q]   = nodes[i,1]
-        s[q]    = dy_f/dy_i
+        s[q]    .= dy_f/dy_i
 
         q       = q[end] .+ (1:nx)
         ii[q]   = nodes[i,j]
         jj[q]   = nodes[i,2]
-        s[q]    = -dy_f/dy_i
+        s[q]    .= -dy_f/dy_i
 
-        bc_rhs[nodes[i,j]] = 0
+        bc_rhs[nodes[i,j]] .= 0
 
         #Bottom Boundary Condition
         i       = 2:nx+1
@@ -178,24 +178,24 @@ function applyBC_2D(BC::BoundaryCondition)
         q       = q[end] .+ (1:nx)
         ii[q]   = nodes[i,j]
         jj[q]   = nodes[i,j]
-        s[q]    = 1
+        s[q]    .= 1
 
         q       = q[end] .+ (1:nx)
         ii[q]   = nodes[i,j]
         jj[q]   = nodes[i,j+1]
-        s[q]    = 1
+        s[q]    .= 1
 
         q       = q[end] .+ (1:nx)
         ii[q]   = nodes[i,j]
         jj[q]   = nodes[i,ny+1]
-        s[q]    = -1
+        s[q]    .= -1
 
         q       = q[end] .+ (1:nx)
         ii[q]   = nodes[i,j]
         jj[q]   = nodes[i,ny+2]
-        s[q]    = -1
+        s[q]    .= -1
 
-        bc_rhs[nodes[i,j]] = 0
+        bc_rhs[nodes[i,j]] .= 0
     end
 
     if (BC.left.periodic == false && BC.right.periodic == false)
@@ -242,24 +242,24 @@ function applyBC_2D(BC::BoundaryCondition)
         q       = q[end] .+ (1:ny)
         ii[q]   = nodes[i,j]
         jj[q]   = nodes[i,j]
-        s[q]    = 1
+        s[q]    .= 1
 
         q       = q[end] .+ (1:ny)
         ii[q]   = nodes[i,j]
         jj[q]   = nodes[i-1,j]
-        s[q]    = -1
+        s[q]    .= -1
 
         q       = q[end] .+ (1:ny)
         ii[q]   = nodes[i,j]
         jj[q]   = nodes[1,j]
-        s[q]    = dx_f/dx_i
+        s[q]    .= dx_f/dx_i
 
         q       = q[end] .+ (1:ny)
         ii[q]   = nodes[i,j]
         jj[q]   = nodes[2,j]
-        s[q]    = -dx_f/dx_i
+        s[q]    .= -dx_f/dx_i
 
-        bc_rhs[nodes[i,j]] = 0
+        bc_rhs[nodes[i,j]] .= 0
 
         #Left Boundary Condition
         i       = 1
@@ -267,24 +267,24 @@ function applyBC_2D(BC::BoundaryCondition)
         q       = q[end] .+ (1:ny)
         ii[q]   = nodes[i,j]
         jj[q]   = nodes[i,j]
-        s[q]    = 1
+        s[q]    .= 1
 
         q       = q[end] .+ (1:ny)
         ii[q]   = nodes[i,j]
         jj[q]   = nodes[i+1,j]
-        s[q]    = 1
+        s[q]    .= 1
 
         q       = q[end] .+ (1:ny)
         ii[q]   = nodes[i,j]
         jj[q]   = nodes[nx+1,j]
-        s[q]    = -1
+        s[q]    .= -1
 
         q       = q[end] .+ (1:ny)
         ii[q]   = nodes[i,j]
         jj[q]   = nodes[nx+2,j]
-        s[q]    = -1
+        s[q]    .= -1
 
-        bc_rhs[nodes[i,j]] = 0
+        bc_rhs[nodes[i,j]] .= 0
     end
 
     #Formulate Sparse Matrix

@@ -89,7 +89,7 @@ function ghostCells_2D(ϕ::Any, BC:: BoundaryCondition)
         #periodic boundary conditions
 
         #top boundary
-        ghostϕ[2:nx+1,2:ny+2] = ϕ[:,1]
+        ghostϕ[2:nx+1,ny+2] = ϕ[:,1]
 
         #bottom boundary
         ghostϕ[2:nx+1,1] = ϕ[:,end]
