@@ -2,6 +2,7 @@ include("../../../structs/structs.jl")
 include("../../../mesh/mesh.jl")
 include("../../../bcs/bcs.jl")
 include("../../../discret/discret.jl")
+include("../../../interpol/arithmeticFaceAvg.jl")
 include("../../../twophase/twophase.jl")
 include("../../../twophase/levelset.jl")
 
@@ -17,8 +18,8 @@ mu2 = 1.0e-5	#dynamic viscosity of phase 2
 #grid parameters
 lx = 1
 ly = 1
-nx = 40
-ny = 40
+nx = 400
+ny = 400
 
 #create a 2D mesh and coordinates
 msh = meshGen2D(nx,ny,lx,ly)
@@ -45,9 +46,11 @@ if case == 1 #circle translation
 	#set velocity direction and magnitude
 	Ux = 1. #x relative magnitude
 	Uy = 2. #y relative magnitude
-	U = 1. #velocity magnitude
-	Ux = Ux/sqrt(Ux^2+Uy^2)*U
-	Uy = Uy/sqrt(Ux^2+Uy^2)*U
+	Uval = 1. #velocity magnitude
+	Ux = Ux/sqrt(Ux^2+Uy^2)*Uval
+	Uy = Uy/sqrt(Ux^2+Uy^2)*Uval
+	Ux = Ux * ones(nx+2,ny+2)
+	Uy = Uy * ones(nx+2,ny+2)
 
 	#advect
 
@@ -66,7 +69,29 @@ if case == 1 #circle translation
 	#force G to be periodic
 	ghost = ghostCells(Gval[2:nx+1,2:ny+1],BC)
 	
+	#create face variable for velocity and matrices for upwind convection
+	Ucell = CellVariable(msh,Ux)
+	Vcell = CellVariable(msh,Uy)
+	Uface = arithmeticFaceAvg(Ucell)
+	Vface = arithmeticFaceAvg(Vcell)
+	U = FaceVariable(msh,Uface.x,Vface.y,[])
+	M, Mx, My = upwindConvection(U)
 	
+	#set time step
+	dt = 0.01 
+
+	#advect (to be written)
+	for t = 1:5
+		Gval0 = G.val
+		Gval0 = reshape(Gval0,((nx+2)*(ny+2),1))
+		Gvalupdate = M * Gval0
+		Gval0 = reshape(Gval0,(nx+2,ny+2))	
+		Gvalupdate = reshape(Gvalupdate,(nx+2,ny+2))	
+		Gval1 = similar(Gval0)
+		@. Gval1 = Gval0 - dt * Gvalupdate
+		global G = CellVariable(msh,Gval1)
+		global G, Gs = levelset_reinit(G,1)
+	end 
 	
 
 elseif case == 2 #Zalesak's disk (Zalesak (1999), see also Ansari (2019) Listing 3.1)
@@ -78,7 +103,7 @@ elseif case == 2 #Zalesak's disk (Zalesak (1999), see also Ansari (2019) Listing
 	@. Gval = 0.15 - Rval
 	bottom = 0.75 - 0.15 * cos(asin(0.025/0.15))
 	for i = 1:nx+2
-		for j = 1:nx+2
+		for j = 1:ny+2
 			Gnow = Gval[i,j]
 			Rnow = Rval[i,j]
 			xnow = x[i,j]
@@ -125,11 +150,31 @@ elseif case == 2 #Zalesak's disk (Zalesak (1999), see also Ansari (2019) Listing
 	@. Ux = y - 0.5
 	@. Uy = 0.5 - x
 
+	#create face variable for velocity and matrices for upwind convection
+	Ucell = CellVariable(msh,Ux)
+	Vcell = CellVariable(msh,Uy)
+	Uface = arithmeticFaceAvg(Ucell)
+	Vface = arithmeticFaceAvg(Vcell)
+	U = FaceVariable(msh,Uface.x,Vface.y,[])
+	M, Mx, My = upwindConvection(U)
+
 	#set time step
-	dt = 2*pi/628 # equals dx (for 100x100 box) with some adjustment so it reaches exactly 2pi after 628 steps
+	dt = 2*pi/628/4 # equals dx (for 100x100 box) with some adjustment so it reaches exactly 2pi after 628 steps
 
 	#advect (to be written)
-
+	for t = 1:628*4
+		Gval0 = G.val
+		Gval0 = reshape(Gval0,((nx+2)*(ny+2),1))
+		Gvalupdate = M * Gval0
+		Gval0 = reshape(Gval0,(nx+2,ny+2))	
+		Gvalupdate = reshape(Gvalupdate,(nx+2,ny+2))	
+		Gval1 = similar(Gval0)
+		@. Gval1 = Gval0 - dt * Gvalupdate
+		global G = CellVariable(msh,Gval1)
+		if mod(t,4) == 0
+			global G, Gs = levelset_reinit(G,1)
+		end
+	end 
 
 end	
 
@@ -142,11 +187,20 @@ ENV["GKSwstype"]=100
 xint = x[2:nx+1,1]
 yint = y[1,2:ny+1]
 G0int = G0.val[2:nx+1,2:ny+1]
-pcontour = Plots.contour(xint,yint,G0int',levels=[0.0],color=:black,aspect_ratio=:equal,xlim=[0,1],ylim=[0,1])
-Plots.plot(pcontour)
+p0 = Plots.contour(xint,yint,G0int',levels=[0.0],color=:black,colorbar=:none)
+plotmain = Plots.plot(p0,aspect_ratio=:equal,xlim=[0,1],ylim=[0,1],xtickfont=font(20),ytickfont=font(20),grid=false,size=[1200,800])
 
 if case == 1 
 	savefig("interface_circle_init")
 elseif case == 2
 	savefig("interface_zalesak_init")
+end
+
+G1int = G.val[2:nx+1,2:ny+1]
+p1 = Plots.contour!(xint,yint,G1int',levels=[0.0],color=:red,colorbar=:none)
+
+if case == 1 
+	savefig("interface_circle_fin")
+elseif case == 2
+	savefig("interface_zalesak_fin")
 end
