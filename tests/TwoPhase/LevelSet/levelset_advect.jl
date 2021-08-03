@@ -7,7 +7,7 @@ include("../../../twophase/twophase.jl")
 include("../../../twophase/levelset.jl")
 
 #advection test for level set routine
-case = 2
+case = 1
 
 #material parameters
 rho1 = 1000.	#density of phase 1
@@ -64,10 +64,11 @@ if case == 1 #circle translation
 	BC.right.periodic = true
 	BC.top.periodic = true
 	BC.bottom.periodic = true
-	bc_mat, bc_rhs = applyBC(BC)
 
 	#force G to be periodic
 	ghost = ghostCells(Gval[2:nx+1,2:ny+1],BC)
+	G = CellVariable(msh,ghost)
+	G0 = G
 	
 	#create face variable for velocity and matrices for upwind convection
 	Ucell = CellVariable(msh,Ux)
@@ -78,10 +79,10 @@ if case == 1 #circle translation
 	M, Mx, My = upwindConvection(U)
 	
 	#set time step
-	dt = 0.01 
+	dt = 0.005/4
 
 	#advect (to be written)
-	for t = 1:5
+	for t = 1:1000*4
 		Gval0 = G.val
 		Gval0 = reshape(Gval0,((nx+2)*(ny+2),1))
 		Gvalupdate = M * Gval0
@@ -90,7 +91,14 @@ if case == 1 #circle translation
 		Gval1 = similar(Gval0)
 		@. Gval1 = Gval0 - dt * Gvalupdate
 		global G = CellVariable(msh,Gval1)
-		global G, Gs = levelset_reinit(G,1)
+	
+		#force G to be periodic
+		local ghost = ghostCells(Gval1[2:nx+1,2:ny+1],BC)
+		global G = CellVariable(msh,ghost)
+		
+		if mod(t,4) == 0
+			global G, Gs = levelset_reinit(G,BC,1)
+		end
 	end 
 	
 
@@ -139,6 +147,7 @@ elseif case == 2 #Zalesak's disk (Zalesak (1999), see also Ansari (2019) Listing
 		end	
 	end
 	G = CellVariable(msh,Gval)
+	BC = generateBC(msh) #default
 	
 	#for verification
 	G0 = G
@@ -172,11 +181,14 @@ elseif case == 2 #Zalesak's disk (Zalesak (1999), see also Ansari (2019) Listing
 		@. Gval1 = Gval0 - dt * Gvalupdate
 		global G = CellVariable(msh,Gval1)
 		if mod(t,4) == 0
-			global G, Gs = levelset_reinit(G,1)
+			global G, Gs = levelset_reinit(G,BC,1)
 		end
 	end 
 
 end	
+
+#for verification
+F,rho,mu = levelset_materialproperties(G,rho1,rho2,mu1,mu2)
 
 #plot
 
@@ -204,3 +216,7 @@ if case == 1
 elseif case == 2
 	savefig("interface_zalesak_fin")
 end
+
+F0sum = sum(F0.val)*dx*dy
+Fsum = sum(F.val)*dx*dy
+print(abs(F0sum-Fsum)/F0sum*100)

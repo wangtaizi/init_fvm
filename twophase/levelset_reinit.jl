@@ -1,4 +1,4 @@
-function levelset_reinit(G::CellVariable, n)
+function levelset_reinit(G::CellVariable, BC::BoundaryCondition, n)
 
 	#reinitialize G to make sure it remains as close to a distance function as possible
 	#performed as necessary (every time step, or every few time steps) with n iterations
@@ -16,8 +16,13 @@ function levelset_reinit(G::CellVariable, n)
 	#set up sign function as per eq (36) of Peng, Merriman, Osher, Zhao and Kang (1999)
 	Gv = G.val
 	Gx, Gy = grad(G)
-	Gx = gradextend(Gx)
-	Gy = gradextend(Gy)
+	if (BC.left.periodic == true && BC.right.periodic == true && BC.top.periodic == true && BC.bottom.periodic == true)
+		Gx = gradextend_periodic(Gx)
+		Gy = gradextend_periodic(Gy)
+	else
+		Gx = gradextend(Gx)
+		Gy = gradextend(Gy)
+	end
 	Gxv = Gx.val
 	Gyv = Gy.val
 	Gsv = similar(Gxv)
@@ -43,8 +48,13 @@ function levelset_reinit(G::CellVariable, n)
 		# update variables
 		Gv = Gvnew
 		Gx, Gy = grad(CellVariable(G.domain,Gv))
-		Gx = gradextend(Gx)
-		Gy = gradextend(Gy)
+		if (BC.left.periodic == true && BC.right.periodic == true && BC.top.periodic == true && BC.bottom.periodic == true)
+			Gx = gradextend_periodic(Gx)
+			Gy = gradextend_periodic(Gy)
+		else
+			Gx = gradextend(Gx)
+			Gy = gradextend(Gy)
+		end
 		Gxv = Gx.val
 		Gyv = Gy.val
 		Gsv = similar(Gxv)

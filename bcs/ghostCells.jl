@@ -95,5 +95,14 @@ function ghostCells_2D(ϕ::Any, BC:: BoundaryCondition)
         ghostϕ[2:nx+1,1] = ϕ[:,end]
     end
 
+	if (BC.left.periodic == true && BC.right.periodic == true && BC.top.periodic == true && BC.bottom.periodic == true)
+		#periodic boundary conditions
+		#corners
+        ghostϕ[1,1] = ϕ[nx,ny]
+        ghostϕ[1,ny+2] = ϕ[nx,1]
+        ghostϕ[nx+2,1] = ϕ[1,ny]
+        ghostϕ[nx+2,ny+2] = ϕ[1,1]
+	end	
+
     return ghostϕ
 end

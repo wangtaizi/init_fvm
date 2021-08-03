@@ -1,5 +1,6 @@
 include("../../../structs/structs.jl")
 include("../../../mesh/mesh.jl")
+include("../../../bcs/bcs.jl")
 include("../../../discret/discret.jl")
 include("../../../twophase/twophase.jl")
 include("../../../twophase/levelset.jl")
@@ -36,32 +37,33 @@ muB = 1e-5
 # create level set CellVariable
 
 G = CellVariable(msh,Gval)
+BC = generateBC(msh) #default
 
 
 
 # compute quantities after 0 iterations
 
-G0, Gs0 = levelset_reinit(G,0)
+G0, Gs0 = levelset_reinit(G,BC,0)
 F0,rho0,mu0 = levelset_materialproperties(G0,rhoA,rhoB,muA,muB)
 m0 = sum(F0.val)*dx*dy
 
 
 # compute quantities after 1 iteration
 
-G1, Gs1 = levelset_reinit(G0,1)
+G1, Gs1 = levelset_reinit(G0,BC,1)
 F1,rho1,mu1 = levelset_materialproperties(G1,rhoA,rhoB,muA,muB)
 m1 = sum(F1.val)*dx*dy
 
 
 # compute quantities after 2 iterations
 
-G2, Gs2 = levelset_reinit(G1,1)
+G2, Gs2 = levelset_reinit(G1,BC,1)
 F2,rho2,mu2 = levelset_materialproperties(G2,rhoA,rhoB,muA,muB)
 m2 = sum(F2.val)*dx*dy
 
 
 # compute quantities after 2 iterations (at one go)
 
-GX, GsX = levelset_reinit(G0,2)
+GX, GsX = levelset_reinit(G0,BC,2)
 FX,rhoX,muX = levelset_materialproperties(GX,rhoA,rhoB,muA,muB)
 mX = sum(FX.val)*dx*dy

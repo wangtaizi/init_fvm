@@ -2,3 +2,4 @@
 include("./normal.jl")
 include("./curvature.jl")
 include("./gradextend.jl")
+include("./gradextend_periodic.jl")
