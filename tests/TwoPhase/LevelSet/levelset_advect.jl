@@ -81,8 +81,8 @@ if case == 1 #circle translation
 	#set time step
 	dt = 0.005/4
 
-	#advect (to be written)
-	for t = 1:1000*4
+	#advect
+	for t = 1:10000*4
 		Gval0 = G.val
 		Gval0 = reshape(Gval0,((nx+2)*(ny+2),1))
 		Gvalupdate = M * Gval0
@@ -170,7 +170,7 @@ elseif case == 2 #Zalesak's disk (Zalesak (1999), see also Ansari (2019) Listing
 	#set time step
 	dt = 2*pi/628/4 # equals dx (for 100x100 box) with some adjustment so it reaches exactly 2pi after 628 steps
 
-	#advect (to be written)
+	#advect
 	for t = 1:628*4
 		Gval0 = G.val
 		Gval0 = reshape(Gval0,((nx+2)*(ny+2),1))
