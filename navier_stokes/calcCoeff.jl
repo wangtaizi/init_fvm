@@ -1,6 +1,4 @@
-using LinearAlgebra
-
-function calcCoeff(msh, M, ALGORITHM)
+function calcCoeff(msh::MeshStructure, M::SparseMatrixCSC, ALGORITHM::String)
     #===========================================
     DESCRIPTION:
     Calculates the sum of coeffient terms aₚ for
