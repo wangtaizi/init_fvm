@@ -26,11 +26,11 @@ function poiseuilleFlow()
     pInit       = 0.0                       #Initial guess for pressure
     height      = 1.0                       #channel height
     len         = 2*height                  #channel length
-    dPdx        = 0.01                      #pressure gradient in x direction
+    dPdx        = -0.01                      #x pressure gradient
     rho         = 1000                      #Density of fluid
     mu          = .001                      #Dynamic viscosity
-    nx          = 100                       #Number of x nodes
-    ny          = 100                       #Number of y nodes
+    nx          = 500                       #Number of x nodes
+    ny          = 500                       #Number of y nodes
 
     #Formulate mesh
     msh = meshGen2D(nx, ny, len, height)
@@ -66,15 +66,17 @@ function poiseuilleFlow()
     vCellVar    = generateCellVar(msh, vInit, vBC)
     pCellVar    = generateCellVar(msh, 1, pBC)
 
+    pGradx      = generateCellVar(msh, dPdx, pBC)
+    pGrady      = generateCellVar(msh, 0.0, pBC)
+
     #Solve momentum equations
     uCellVar, vCellVar, u_ap, v_ap = momentum(msh, uCellVar, vCellVar, uBC, vBC,
-                                                pCellVar, faceVel, rho, muFaceVar,
-                                                velRelax, "SIMPLE")
-    #Correct momentum function to take pressure gradient outside first
+                                                pGradx, pGrady, faceVel, rho,
+                                                muFaceVar, velRelax, "SIMPLE")
 
 
     #Analytical solution
-    U(y) = -0.5*height^2/mu*dPdx*(1 .-(y/height).^2)
+    U(y) = (-dPdx/(2*mu)).*y.*(height.-y)
     yRng = LinRange(0, height, ny)
     uAnalytical = U(yRng)
 
@@ -91,9 +93,9 @@ function poiseuilleFlow()
                 label       = "Analytical Solution")
            plot!(uCellVar.val[3, 2:end-1], uCellVar.domain.cellCenters.y,
                 label       = "Numerical Solution",
-                xlabel      = "x velocity (m/s)",
+                xlabel      = "u (m/s)",
                 ylabel      = "y (m)",
-                legend      = :right)
+                legend      = :topright)
     display(fig1)
 end
 

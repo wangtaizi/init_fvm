@@ -42,9 +42,9 @@ function steadyLidDrivenCavity()
     cavityLen   = 0.1                       #Length of square cavity
     rho         = 1000                      #Density of fluid
     mu          = rho*cavityLen*lidVel/Re   #Dynamic viscosity
-    nIter       = 500                       #Number of iterations
-    nx          = 100                        #Number of x nodes
-    ny          = 100                        #Number of y nodes
+    nIter       = 100                         #Number of iterations
+    nx          = 20                        #Number of x nodes
+    ny          = 20                        #Number of y nodes
 
     #Formulate mesh
     msh = meshGen2D(nx, ny, cavityLen, cavityLen)
@@ -78,6 +78,9 @@ function steadyLidDrivenCavity()
     vCellVar    = generateCellVar(msh, vInit, vBC)
     pCellVar    = generateCellVar(msh, pInit, pBC)
 
+    #Take the gradient of the pressure
+    pGradx, pGrady = grad(pCellVar)
+
     #main loop
     for i = 1:nIter
         #Define previous velocity iteration
@@ -85,8 +88,10 @@ function steadyLidDrivenCavity()
         vOld = vCellVar
 
         #Solve momentum equations
-        uCellVar, vCellVar, u_ap, v_ap = momentum(msh, uOld, vOld, uBC, vBC, pCellVar, faceVel,
-                                    rho, muFaceVar, velRelax, "SIMPLE")
+        uCellVar, vCellVar, u_ap, v_ap = momentum(msh, uOld, vOld, uBC, vBC,
+                                                    pGradx, pGrady, faceVel,
+                                                    rho, muFaceVar, velRelax,
+                                                    "SIMPLE")
 
         #Pressure Correction Equation
         # ∇(Vₚ/aₚ)⋅∇p' = ∇⋅ū
@@ -110,7 +115,8 @@ function steadyLidDrivenCavity()
 
         #Calculate diffusion term of pressure correction equation
         presCorrectionDiff = diffusionCD(diffCoeff)
-        #println(diag(presCorrectionDiff))
+        #diff = divergence(grad(diffCoeff))
+        #println(presCorrectionDiff.x == diff)
 
         #Apply pressure boundary conditions
         M_pBC, RHS_pBC = applyBC(pBC)
@@ -163,7 +169,8 @@ function steadyLidDrivenCavity()
             uMaxError   = maximum(abs.(uOld.val - uCellVar.val))
             vMaxError   = maximum(abs.(vOld.val - vCellVar.val))
 
-            println("i=$i: u_RMSE=$uRMSE, v_RMSE=$vRMSE")
+            println("i=$i:")
+            println("u_RMSE=$uRMSE, v_RMSE=$vRMSE")
             println("Max Error: p=$pMaxError, u=$uMaxError, v=$vMaxError")
         end
 
