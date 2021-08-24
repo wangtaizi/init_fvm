@@ -125,7 +125,7 @@ for (key,value) in cells
 		x3,y3 = interpolate_edge(XN.val,YN.val,Fval,key[1],key[2],edge1)
 		x4,y4 = interpolate_edge(XN.val,YN.val,Fval,key[1],key[2],edge2)
 	end
-	points[key] = (length(value.crossings),nxval[key[1],key[2]],nyval[key[1],key[2]],x1,y1,x2,y2,x3,y3,x4,y4)
+	points[key] = (length(value.crossings),nxval[key[1]+1,key[2]+1],nyval[key[1]+1,key[2]+1],x1,y1,x2,y2,x3,y3,x4,y4)
 end
 
 return points
