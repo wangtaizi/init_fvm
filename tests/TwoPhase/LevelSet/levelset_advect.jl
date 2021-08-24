@@ -82,7 +82,7 @@ if case == 1 #circle translation
 	dt = 0.005/4
 
 	#advect
-	for t = 1:10000*4
+	for t = 1:5000*4
 		Gval0 = G.val
 		Gval0 = reshape(Gval0,((nx+2)*(ny+2),1))
 		Gvalupdate = M * Gval0
